@@ -4,6 +4,7 @@ How to löve:
 
 1. Download here: 
 https://love2d.org/#download
+and put it into Applications.
 
 2. Create a main.lua and write: 
 function love.draw()
