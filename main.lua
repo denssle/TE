@@ -9,7 +9,7 @@ radius = 100
 function love.load(arg)
   knotenIMG = love.graphics.newImage('assets/ball.png')
   cacheKnotens = {}
-  for i = 1, 7 do
+  for i = 1, 7   do
     max = love.graphics.getWidth()
     min = i
     randX = love.math.random(min, max)
@@ -45,14 +45,12 @@ function love.draw(dt)
 end
 
 function getDistance(knot1, knot2)
-  -- math.sqrt math.pow
-  -- Wurzel aus((x2-x1)^2+(y2-y1)^2)
-  xi = knot2.x - knot1.x
-  yi = knot2.y - knot2.y
-  pxi = math.pow(xi, 2)
-  pyi = math.pow(yi, 2)
-  xy = pxi + pyi
-  return math.sqrt(xy)
+  x1 = knot1.x
+  x2 = knot2.x
+  y1 = knot1.y
+  y2 = knot2.y
+  distance = ((x2-x1)^2+(y2-y1)^2)^0.5
+  return math.ceil(distance)
 end
 
 function createTripels(cacheKnotens)
