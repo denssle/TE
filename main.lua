@@ -5,23 +5,39 @@ tripels = {}
 shortRangeTripels = {}
 longRangeTripels={}
 radius = 100
+world = nil
 
 function love.load(arg)
-  knotenIMG = love.graphics.newImage('assets/ball.png')
+  love.physics.setMeter(64) --the height of a meter our worlds will be 64px
+  world = love.physics.newWorld(0, 9.81*64, true) --create a world for the bodies to exist in with horizontal gravity of 0 and vertical gravity of 9.81
+  love.graphics.setBackgroundColor(104, 136, 248) --set the background color to a nice blue
+
   cacheKnotens = {}
   for i = 1, 7   do
     max = love.graphics.getWidth()
     min = i
     randX = love.math.random(min, max)
     randY = love.math.random(min, max)
-    knot = { x = randX, y = randY, name = i, img = knotenIMG }
+    knot = createKnot(randX, randY, i)
     table.insert(knotens, knot)
     table.insert(cacheKnotens, knot)
   end
   createTripels(cacheKnotens)
 end
 
+function createKnot(randX, randY, i)
+  knot = {}
+  knot.x = randX
+  knot.y = randY
+  knot.name = i
+  knot.body = love.physics.newBody(world, randX, randY, "static") -- dynamic or static
+  knot.shape = love.physics.newRectangleShape(25,25)         -- set size to 25,25 (x,y)
+  knot.fix = love.physics.newFixture(knot.body, knot.shape)
+  return knot
+end
+
 function love.update(dt)
+  world:update(dt)
   if love.keyboard.isDown('escape') then
     love.event.push('quit')
   end
@@ -30,8 +46,10 @@ end
 function love.draw(dt)
   for i, knot in ipairs(knotens) do
     love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(knot.img, knot.x, knot.y)
+    love.graphics.rectangle("fill", knot.x, knot.y, 10, 10) --( mode, x, y, width, height )
     love.graphics.print(knot.name, knot.x, knot.y+20)
+    love.graphics.setColor(0, 255, 0)
+    love.graphics.circle("line", knot.x, knot.y, radius, 1000)
   end
 
   for i, trip in ipairs(tripels) do
@@ -69,12 +87,13 @@ end
 function createTripel(knot, knot2)
   dis = getDistance(knot, knot2)
   options = createOptions(dis)
+
   print(knot.name, " - ", knot2.name, "short: ", options.short, "distance", dis)
-  trip = {
-    knotA = knot,
-    knotB = knot2,
-    option = options
-  }
+
+  trip = {}
+  trip.knotA = knot
+  trip.knotB = knot2
+  trip.option = options
   return trip
 end
 
