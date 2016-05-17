@@ -1,6 +1,7 @@
 TOTAL EMPIRE
 
-How to löve: 
+How to löve:
+
 1. Download here: 
 https://love2d.org/#download
 
@@ -11,6 +12,7 @@ end
 
 3. Start your "Hello World":
 /Applications/love.app/Contents/MacOS/love ~/path/to/mygame
+
 
 IDE:    http://atom.io/
 PlugIn: https://atom.io/packages/language-lua
