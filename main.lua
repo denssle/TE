@@ -10,7 +10,7 @@ function love.load(arg)
   love.graphics.setBackgroundColor(104, 136, 248) --set the background color to a nice blue
 
   cacheKnotens = {}
-  for i = 1, 7   do
+  for i = 1, 5 do
     max = love.graphics.getWidth()
     min = i
     randX = love.math.random(min, max)
@@ -42,7 +42,14 @@ end
 
 function love.mousepressed(x, y, button, istouch)
    if button == 1 then -- the primary button
-      print("x", x, "y", y)
+     triple = getRandomTriple()
+     knot = triple.knotA
+     print("x", x, "y", y, "knot", knot.name)
+     knot.x = x
+     knot.y = y
+     triple.knotA = knot
+
+     updateTriples()
    end
 end
 
@@ -148,4 +155,31 @@ function getKnotForXY(x, y)
     end
   end
   return nil
+end
+
+function getRandomTriple()
+  nbr = love.math.random(1, table.getn(tripels))
+  return tripels[nbr]
+end
+
+function updateTriple(triple)
+  trip = {}
+  trip.knotA = triple.knotA
+  trip.knotB = triple.knotB
+
+  dis = getDistance(triple.knotA, triple.knotB)
+  options = createOptions(dis)
+
+  print("old", triple.option.distance, "neu", dis)
+
+  trip.option = options
+  return trip
+end
+
+function updateTriples()
+  for i, trip in ipairs(tripels) do
+    dis = getDistance(trip.knotA, trip.knotB)
+    options = createOptions(dis)
+    trip.option = options
+  end
 end
