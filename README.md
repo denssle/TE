@@ -14,5 +14,8 @@ end
 /Applications/love.app/Contents/MacOS/love ~/path/to/mygame
 
 
+Some links: 
 IDE:    http://atom.io/
 PlugIn: https://atom.io/packages/language-lua
+
+https://love2d.org/wiki/General_math
