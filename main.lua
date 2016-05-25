@@ -102,7 +102,6 @@ function integradeKnot(knot)
   table.insert(newKnot, knot)
   cacheKnotens = knotenmodul.getKnotens()
   triplemodul.createTripels(cacheKnotens, newKnot)
-  knotenmodul.addKnot(knot)
 end
 
 function deleteClickedKnot(knot)
