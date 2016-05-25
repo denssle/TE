@@ -28,7 +28,7 @@ function knotenmodul.createKnot(randX, randY, name)
   knot.x = randX
   knot.y = randY
   knot.name = name
-
+  knot.id = love.math.random(0, 1000000) + love.math.random(0, 1000000)
   return knot
 end
 

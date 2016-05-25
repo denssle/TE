@@ -9,12 +9,12 @@ end
 function triplemodul.createTripels(cacheKnotens, knotens)
   for i, knot in ipairs(knotens) do
     for j, knot2 in ipairs(cacheKnotens) do
-      if knot.name ~= knot2.name then
+      if knot.id ~= knot2.id then
         trip = triplemodul.createTripel(knot, knot2)
         table.insert(tripels, trip)
       end
     end
-    k = triplemodul.getIndexForID(cacheKnotens, knot.name)
+    k = triplemodul.getIndexForID(cacheKnotens, knot.id)
     table.remove(cacheKnotens, k)
   end
 end
@@ -56,7 +56,7 @@ end
 function contains(set, key)
   return set[key] ~= nil
 end
-
+--[[
 function triplemodul.getTripleForIDs(table, id1, id2)
   for i, trip in ipairs(table) do
     if(trip.knotA.name == id1 or trip.knotB.name == id1) then
@@ -68,9 +68,10 @@ function triplemodul.getTripleForIDs(table, id1, id2)
   return nil
 end
 
+]]--
 function triplemodul.getIndexForID(table, id)
   for i, knot in ipairs(table) do
-    if knot.name == id then
+    if knot.id == id then
       return i
     end
   end
