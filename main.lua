@@ -119,13 +119,13 @@ end
 function leftClick(knot, x,y)
   knotenmodul.uncheckAll()
   if checkedKnotID ~= nil then --We have a checked Knot
-    moveCheckedKnot(x, y)
+    moveCheckedKnot(x, y) --We move the knot to new position
   else -- No checked Knot
     if knot ~= nil then --We clicked a knot
-      markKnot(knot)
+      markKnot(knot) --we check the knot
       checkedKnotID = knot.id
     else --Click nothing
-      createKnot(x, y)
+      createKnot(x, y) --create a knot there
     end
   end
 end

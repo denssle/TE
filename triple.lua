@@ -38,7 +38,7 @@ function triplemodul.getDistance(knot1, knot2)
 end
 
 function triplemodul.createOptions(knotA, knotB)
-  dis = triplemodul.getDistance(knotA, knotB)
+  local dis = triplemodul.getDistance(knotA, knotB)
 
   s = false
   if(dis < radius) then
