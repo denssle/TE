@@ -2,6 +2,7 @@ debug = true
 
 local knotenmodul = require "knot"
 local triplemodul = require "triple"
+local armymodul= require "army"
 local knotRadius = 15
 local checkedKnotID = nil
 
@@ -33,6 +34,7 @@ function love.draw(dt)
   drawTriples()
   drawFPS()
   drawKnotens()
+  drawArmys()
 end
 
 function createKnotsAndTripels()
@@ -84,6 +86,10 @@ function drawKnotens()
       love.graphics.print(knot.name, knot.x, knot.y+knotRadius+5)
     end
   end
+end
+
+function drawArmys()
+  armys = armymodul.getArmys()
 end
 
 function createKnot(x, y)

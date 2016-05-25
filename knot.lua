@@ -30,6 +30,7 @@ function knotenmodul.createKnot(randX, randY, name)
   knot.id = love.math.random(0, 1000000) + love.math.random(0, 1000000)
   knot.check = false
   knot.killMe = false
+  knot.army = nil
   print("createKnot", knot.name, "x", knot.x, "y", knot.y, "id", knot.id)
   table.insert(knotens, knot)
   return knot
