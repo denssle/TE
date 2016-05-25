@@ -10,12 +10,10 @@ function triplemodul.createTripels(cacheKnotens, knotens)
   for i, knot in ipairs(knotens) do
     for j, knot2 in ipairs(cacheKnotens) do
       if knot.id ~= knot2.id then
-        trip = triplemodul.createTripel(knot, knot2)
-        table.insert(tripels, trip)
+        triplemodul.createTripel(knot, knot2)
       end
     end
-    k = triplemodul.getIndexForID(cacheKnotens, knot.id)
-    table.remove(cacheKnotens, k)
+    table.remove(cacheKnotens, knot.id)
   end
 end
 
@@ -26,7 +24,9 @@ function triplemodul.createTripel(knot, knot2)
   trip = {}
   trip.knotA = knot
   trip.knotB = knot2
+  trip.killMe = false
   trip.option = options
+  table.insert(tripels, trip)
   return trip
 end
 
@@ -47,35 +47,10 @@ function triplemodul.createOptions(dis)
 
   op = {}
   op.short = s
-  op.id = love.math.random(0, 1000000)
+  op.id = love.math.random(0, 1000000) * love.math.random(0, 1000000)
   op.distance = dis
 
   return op
-end
-
-function contains(set, key)
-  return set[key] ~= nil
-end
---[[
-function triplemodul.getTripleForIDs(table, id1, id2)
-  for i, trip in ipairs(table) do
-    if(trip.knotA.name == id1 or trip.knotB.name == id1) then
-      if(trip.knotA.name == id2 or trip.knotB.name == id2) then
-        return trip
-      end
-    end
-  end
-  return nil
-end
-
-]]--
-function triplemodul.getIndexForID(table, id)
-  for i, knot in ipairs(table) do
-    if knot.id == id then
-      return i
-    end
-  end
-  return nil
 end
 
 function triplemodul.getRandomTriple()
@@ -104,14 +79,37 @@ end
 
 function triplemodul.updateTriples()
   for i, trip in ipairs(tripels) do
-    dis = triplemodul.getDistance(trip.knotA, trip.knotB)
-    options = triplemodul.createOptions(dis)
-    trip.option = options
+    if trip.knotA.killMe or trip.knotB.killMe then
+      trip.killMe = true
+      table.remove(tripels, i)
+    else
+      dis = triplemodul.getDistance(trip.knotA, trip.knotB)
+      options = triplemodul.createOptions(dis)
+      trip.option = options
+    end
   end
 end
 
 function triplemodul.deleteAllTriples()
   for k,v in pairs(tripels) do tripels[k]=nil end --delete all tripels
 end
+
+function triplemodul.deleteTriplesFromKnot(knot)
+  for i, trip in ipairs(tripels) do
+    if trip.knotA.id == knot.id or trip.knotB.id == knot.id then
+      trip.killMe = true
+      table.remove(tripels, i)
+    end
+  end
+end
+
+function triplemodul.killTriples()
+  for i, trip in ipairs(tripels) do
+    if trip.killMe then
+      table.remove(tripels, i)
+    end
+  end
+end
+
 
 return triplemodul

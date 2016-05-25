@@ -8,28 +8,29 @@ end
 function knotenmodul.createKnotens(nbr)
   cacheKnotens = {}
   for i = 1, nbr do
-    knot = knotenmodul.createRandomKnot(i)
+    knot = knotenmodul.createRandomKnot()
     table.insert(cacheKnotens, knot)
   end
   return cacheKnotens
 end
 
-function knotenmodul.createRandomKnot(name)
+function knotenmodul.createRandomKnot()
   max = love.graphics.getWidth()
   randX = love.math.random(1, max)
   randY = love.math.random(1, max)
-  knot = knotenmodul.createKnot(randX, randY, name)
-  return knot
+  name = "x "..randX.." y "..randY
+  return knotenmodul.createKnot(randX, randY, name)
 end
 
 function knotenmodul.createKnot(randX, randY, name)
-  print("createKnot", name, "x", randX, "y", randY)
-  knot = {}
+  local knot = {}
   knot.x = randX
   knot.y = randY
   knot.name = name
   knot.id = love.math.random(0, 1000000) + love.math.random(0, 1000000)
   knot.check = false
+  knot.killMe = false
+  print("createKnot", knot.name, "x", knot.x, "y", knot.y, "id", knot.id)
   table.insert(knotens, knot)
   return knot
 end
@@ -83,5 +84,21 @@ function knotenmodul.uncheckAll()
   end
 end
 
+function knotenmodul.deleteKnot(delknot)
+  delknot.killMe = true
+  for i, knot in pairs(knotens) do
+    if knot.id == delknot.id then
+      table.remove(knotens, i)
+    end
+  end
+end
+
+function knotenmodul.killKnots()
+  for i, knot in pairs(knotens) do
+    if knot.killMe then
+       table.remove(knotens, i)
+     end
+   end
+end
 
 return knotenmodul

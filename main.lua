@@ -13,7 +13,9 @@ function love.update(dt)
   if love.keyboard.isDown('escape') then
     love.event.push('quit')
   end
+  triplemodul.killTriples()
   triplemodul.updateTriples()
+  knotenmodul.killKnots()
 end
 
 function love.mousepressed(x, y, button, istouch)
@@ -46,12 +48,14 @@ function drawTriples()
   triples = triplemodul.getTriples()
   if triples  ~= nil then
     for i, trip in ipairs(triplemodul.getTriples()) do
-      if trip.option.short then
-        love.graphics.setColor(255, 0, 0)
-      else
-        love.graphics.setColor(0, 0, 255)
+      if not trip.killMe then
+        if trip.option.short then
+          love.graphics.setColor(255, 0, 0)
+        else
+          love.graphics.setColor(0, 0, 255)
+        end
+        love.graphics.line(trip.knotA.x, trip.knotA.y, trip.knotB.x, trip.knotB.y)
       end
-      love.graphics.line(trip.knotA.x, trip.knotA.y, trip.knotB.x, trip.knotB.y)
     end
   end
 end
@@ -63,19 +67,22 @@ end
 
 function drawKnotens()
   knotens = knotenmodul.getKnotens()
-  for i, knot in ipairs(knotens) do
-    if knot.check then
-      love.graphics.setColor(255, 0, 0)
-    else
-      love.graphics.setColor(255, 255, 255)
+  for id, knot in ipairs(knotens) do
+    if not knot.killMe then
+      if knot.check then
+        love.graphics.setColor(255, 0, 0)
+      else
+        love.graphics.setColor(255, 255, 255)
+      end
+      love.graphics.rectangle("fill", knot.x, knot.y, knotRadius, knotRadius) --( mode, x, y, width, height )
+      love.graphics.print(knot.name, knot.x, knot.y+knotRadius+5)
     end
-    love.graphics.rectangle("fill", knot.x, knot.y, knotRadius, knotRadius) --( mode, x, y, width, height )
-    love.graphics.print(knot.name, knot.x, knot.y+20)
   end
 end
 
 function createKnot(x, y)
-  knot = knotenmodul.createKnot(x, y, x+y)
+  name = "x "..x.." y "..y
+  knot = knotenmodul.createKnot(x, y, name)
   integradeKnot(knot)
 end
 
@@ -95,7 +102,9 @@ end
 function clickKnot(knot)
   knotenmodul.uncheckAll()
   if(knot ~= nil) then
-    knot.check = true
+    --knot.check = true
+    knotenmodul.deleteKnot(knot)
+    triplemodul.deleteTriplesFromKnot(knot)
     return true
   end
   return false
