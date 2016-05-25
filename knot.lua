@@ -1,5 +1,9 @@
 local knotenmodul = {}
-knotens = {}
+local knotens = {}
+
+function knotenmodul.getKnotens()
+  return knotens
+end
 
 function knotenmodul.createKnotens(nbr)
   cacheKnotens = {}
@@ -24,9 +28,7 @@ function knotenmodul.createKnot(randX, randY, name)
   knot.x = randX
   knot.y = randY
   knot.name = name
-  knot.body = love.physics.newBody(world, randX, randY, "static") -- dynamic or static
-  knot.shape = love.physics.newRectangleShape(25,25)         -- set size to 25,25 (x,y)
-  knot.fix = love.physics.newFixture(knot.body, knot.shape)
+
   return knot
 end
 
@@ -46,6 +48,14 @@ function knotenmodul.moveAllKnotsALittle()
     knot.x = knot.x + nbr
     knot.y = knot.y + nbr
   end
+end
+
+function knotenmodul.deleteAllKnots()
+  for k,v in pairs(knotens) do knotens[k]=nil end --delete all knotens
+end
+
+function knotenmodul.addKnot(knot)
+  table.insert(knotens, knot)
 end
 
 return knotenmodul

@@ -1,8 +1,12 @@
 local triplemodul = {}
+local tripels = {}
+local radius = 120
 
-tripels = {}
+function triplemodul.getTriples()
+  return tripels
+end
 
-function triplemodul.createTripels(cacheKnotens)
+function triplemodul.createTripels(cacheKnotens, knotens)
   for i, knot in ipairs(knotens) do
     for j, knot2 in ipairs(cacheKnotens) do
       if knot.name ~= knot2.name then
@@ -103,6 +107,10 @@ function triplemodul.updateTriples()
     options = triplemodul.createOptions(dis)
     trip.option = options
   end
+end
+
+function triplemodul.deleteAllTriples()
+  for k,v in pairs(tripels) do tripels[k]=nil end --delete all tripels
 end
 
 return triplemodul
