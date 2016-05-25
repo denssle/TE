@@ -42,6 +42,11 @@ function armymodul.moveArmy(destination, knot)
 end
 
 function armymodul.combineForces(destination, knot)
+  local da = destination.army
+  local ka = destination.army
+  da.strength = da.strength + ka.strength
+  armymodul.removeArmy(ka)
+  knot.army = nil
 end
 
 return armymodul

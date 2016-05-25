@@ -90,7 +90,8 @@ end
 
 function drawArmy(knot)
   if knot.army ~= nil then
-    love.graphics.circle( "line", knot.x, knot.y, knotRadius * 2, knot.army.strength +4 )
+    love.graphics.circle( "line", knot.x, knot.y, knotRadius * 1.5, 25 )
+    love.graphics.print(knot.army.strength, knot.x+knotRadius * 2, knot.y)
   end
 end
 
@@ -124,10 +125,8 @@ function leftClick(knot, x,y)
   if checkedKnotID ~= nil then --We have a checked Knot
     checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
     if checkedKnot ~= nil and checkedKnot.army ~= nil then
-      print("army move")
       moveCheckedArmy(checkedKnot, x, y)
     else
-      print("knot move", "knot", knot)
       moveCheckedKnot(checkedKnot, x, y) --We move the knot to new position
     end
     checkedKnotID = nil
@@ -150,7 +149,7 @@ end
 
 function moveCheckedArmy(checkedKnot, x, y)
   destination = knotenmodul.getKnotForClick(x, y, knotRadius)
-  if destination ~= nil and checkedKnot.army ~= nil then
+  if destination ~= nil and destination.id ~= checkedKnot.id then
     if destination.army ~= nil then --We have already an army
       armymodul.combineForces(destination, checkedKnot)
     else
