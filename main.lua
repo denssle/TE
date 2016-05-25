@@ -2,7 +2,7 @@ debug = true
 
 local knotenmodul = require "knot"
 local triplemodul = require "triple"
-
+local knotRadius = 15
 
 function love.load(arg)
   love.graphics.setBackgroundColor(104, 136, 248) --set the background color to a nice blue
@@ -18,14 +18,10 @@ end
 
 function love.mousepressed(x, y, button, istouch)
    if button == 1 then -- the primary button
-     knotenmodul.moveAllKnotsALittle()
-     knot = knotenmodul.createRandomKnot(x)
-
-     newKnot = {}
-     table.insert(newKnot, knot)
-     cacheKnotens = knotenmodul.getKnotens()
-     triplemodul.createTripels(cacheKnotens, newKnot)
-     knotenmodul.addKnot(knot)
+     knot = knotenmodul.clickCheck(x, y, knotRadius)
+     if not clickKnot(knot) then
+       createRandomKnotWithTriple(x)
+     end
    end
 end
 
@@ -67,8 +63,30 @@ end
 function drawKnotens()
   knotens = knotenmodul.getKnotens()
   for i, knot in ipairs(knotens) do
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.rectangle("fill", knot.x, knot.y, 10, 10) --( mode, x, y, width, height )
+    if knot.check then
+      love.graphics.setColor(255, 0, 0)
+    else
+      love.graphics.setColor(255, 255, 255)
+    end
+    love.graphics.rectangle("fill", knot.x, knot.y, knotRadius, knotRadius) --( mode, x, y, width, height )
     love.graphics.print(knot.name, knot.x, knot.y+20)
   end
+end
+
+function createRandomKnotWithTriple(x)
+  knot = knotenmodul.createRandomKnot(x)
+  newKnot = {}
+  table.insert(newKnot, knot)
+  cacheKnotens = knotenmodul.getKnotens()
+  triplemodul.createTripels(cacheKnotens, newKnot)
+  knotenmodul.addKnot(knot)
+end
+
+function clickKnot(knot)
+  knotenmodul.uncheckAll()
+  if(knot ~= nil) then
+    knot.check = true
+    return true
+  end
+  return false
 end
