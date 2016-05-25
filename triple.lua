@@ -19,7 +19,7 @@ end
 
 function triplemodul.createTripel(knot, knot2)
   options = triplemodul.createOptions(knot, knot2)
-  print(knot.name, " - ", knot2.name, "short: ", options.short, "distance", options.distance)
+  print(knot.name, " - ", knot2.name, "short: ", options.short, "distance", options.distance, "k1 army", knot.army, "k2 army", knot2.army)
   local trip = {}
   trip.knotA = knot
   trip.knotB = knot2

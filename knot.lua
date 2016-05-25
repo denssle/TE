@@ -54,7 +54,7 @@ function knotenmodul.getKnotByID(id)
   return nil
 end
 
-function knotenmodul.clickCheck(x, y, param)
+function knotenmodul.getKnotForClick(x, y, param)
   xlow = x - param
   xhigh = x -- + param
   ylow = y - param

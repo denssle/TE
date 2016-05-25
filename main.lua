@@ -21,7 +21,7 @@ function love.update(dt)
 end
 
 function love.mousepressed(x, y, button, istouch)
-  knot = knotenmodul.clickCheck(x, y, knotRadius)
+  knot = knotenmodul.getKnotForClick(x, y, knotRadius)
    if button == 1 then -- the primary button
      leftClick(knot, x,y)
    end
@@ -34,7 +34,6 @@ function love.draw(dt)
   drawTriples()
   drawFPS()
   drawKnotens()
-  drawArmys()
 end
 
 function createKnotsAndTripels()
@@ -84,12 +83,15 @@ function drawKnotens()
       end
       love.graphics.rectangle("fill", knot.x, knot.y, knotRadius, knotRadius) --( mode, x, y, width, height )
       love.graphics.print(knot.name, knot.x, knot.y+knotRadius+5)
+      drawArmy(knot)
     end
   end
 end
 
-function drawArmys()
-  armys = armymodul.getArmys()
+function drawArmy(knot)
+  if knot.army ~= nil then
+    love.graphics.circle( "line", knot.x, knot.y, knotRadius * 2, knot.army.strength +4 )
+  end
 end
 
 function createKnot(x, y)
@@ -117,17 +119,21 @@ function deleteClickedKnot(knot)
   end
 end
 
-function markKnot(knot)
-  knot.check = true
-end
-
 function leftClick(knot, x,y)
   knotenmodul.uncheckAll()
   if checkedKnotID ~= nil then --We have a checked Knot
-    moveCheckedKnot(x, y) --We move the knot to new position
+    checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
+    if checkedKnot ~= nil and checkedKnot.army ~= nil then
+      print("army move")
+      moveCheckedArmy(checkedKnot, x, y)
+    else
+      print("knot move", "knot", knot)
+      moveCheckedKnot(checkedKnot, x, y) --We move the knot to new position
+    end
+    checkedKnotID = nil
   else -- No checked Knot
     if knot ~= nil then --We clicked a knot
-      markKnot(knot) --we check the knot
+      knot.check = true --we check the knot
       checkedKnotID = knot.id
     else --Click nothing
       createKnot(x, y) --create a knot there
@@ -135,19 +141,47 @@ function leftClick(knot, x,y)
   end
 end
 
-function moveCheckedKnot(x, y)
-  checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
+function moveCheckedKnot(checkedKnot, x, y)
   if checkedKnot ~= nil then
     checkedKnot.x = x
     checkedKnot.y = y
   end
-  checkedKnotID = nil
+end
+
+function moveCheckedArmy(checkedKnot, x, y)
+  destination = knotenmodul.getKnotForClick(x, y, knotRadius)
+  if destination ~= nil and checkedKnot.army ~= nil then
+    if destination.army ~= nil then --We have already an army
+      armymodul.combineForces(destination, checkedKnot)
+    else
+      armymodul.moveArmy(destination, checkedKnot)
+    end
+  end
 end
 
 function rightClick(knot, x, y)
   if knot ~= nil then
-    deleteClickedKnot(knot)
+    --deleteClickedKnot(knot)
+    rclickedArmy(knot)
   else
     createRandomKnotWithTriple(x)
   end
+end
+
+
+function rclickedArmy(knot)
+  if knot.army ~= nill then
+    updateArmy(knot)
+  else
+    createArmy(knot)
+  end
+end
+
+function createArmy(knot)
+  newArmy = armymodul.createArmy()
+  knot.army = newArmy
+end
+
+function updateArmy(knot)
+  knot.army.strength = knot.army.strength + 1
 end
