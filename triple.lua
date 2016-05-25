@@ -20,7 +20,7 @@ end
 function triplemodul.createTripel(knot, knot2)
   options = triplemodul.createOptions(knot, knot2)
   print(knot.name, " - ", knot2.name, "short: ", options.short, "distance", dis)
-  trip = {}
+  local trip = {}
   trip.knotA = knot
   trip.knotB = knot2
   trip.option = options
@@ -29,10 +29,10 @@ function triplemodul.createTripel(knot, knot2)
 end
 
 function triplemodul.getDistance(knot1, knot2)
-  x1 = knot1.x
-  x2 = knot2.x
-  y1 = knot1.y
-  y2 = knot2.y
+  local x1 = knot1.x
+  local x2 = knot2.x
+  local y1 = knot1.y
+  local y2 = knot2.y
   distance = ((x2-x1)^2+(y2-y1)^2)^0.5
   return math.ceil(distance)
 end

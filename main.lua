@@ -3,6 +3,7 @@ debug = true
 local knotenmodul = require "knot"
 local triplemodul = require "triple"
 local knotRadius = 15
+local checkedKnotID = nil
 
 function love.load(arg)
   love.graphics.setBackgroundColor(104, 136, 248) --set the background color to a nice blue
@@ -19,22 +20,12 @@ function love.update(dt)
 end
 
 function love.mousepressed(x, y, button, istouch)
-  --
   knot = knotenmodul.clickCheck(x, y, knotRadius)
-  knotenmodul.uncheckAll()
    if button == 1 then -- the primary button
-     if knot ~= nil then
-       markKnot(knot)
-     else
-       createKnot(x, y)
-     end
+     leftClick(knot, x,y)
    end
    if button == 2 then
-     if knot ~= nil then
-       deleteClickedKnot(knot)
-     else
-       createRandomKnotWithTriple(x)
-     end
+     rightClick(knot, x,y)
    end
 end
 
@@ -123,4 +114,35 @@ end
 
 function markKnot(knot)
   knot.check = true
+end
+
+function leftClick(knot, x,y)
+  knotenmodul.uncheckAll()
+  if checkedKnotID ~= nil then --We have a checked Knot
+    moveCheckedKnot(x, y)
+  else -- No checked Knot
+    if knot ~= nil then --We clicked a knot
+      markKnot(knot)
+      checkedKnotID = knot.id
+    else --Click nothing
+      createKnot(x, y)
+    end
+  end
+end
+
+function moveCheckedKnot(x, y)
+  checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
+  if checkedKnot ~= nil then
+    checkedKnot.x = x
+    checkedKnot.y = y
+  end
+  checkedKnotID = nil
+end
+
+function rightClick(knot, x, y)
+  if knot ~= nil then
+    deleteClickedKnot(knot)
+  else
+    createRandomKnotWithTriple(x)
+  end
 end

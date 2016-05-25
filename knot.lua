@@ -15,10 +15,10 @@ function knotenmodul.createKnotens(nbr)
 end
 
 function knotenmodul.createRandomKnot()
-  max = love.graphics.getWidth()
-  randX = love.math.random(1, max)
-  randY = love.math.random(1, max)
-  name = "x "..randX.." y "..randY
+  local max = love.graphics.getWidth()
+  local randX = love.math.random(1, max)
+  local randY = love.math.random(1, max)
+  local name = "x "..randX.." y "..randY
   return knotenmodul.createKnot(randX, randY, name)
 end
 
@@ -38,6 +38,15 @@ end
 function knotenmodul.getKnotForXY(x, y)
   for i, knot in ipairs(knotens) do
     if knot.x == x and knot.y == y then
+      return knot
+    end
+  end
+  return nil
+end
+
+function knotenmodul.getKnotByID(id)
+  for i, knot in ipairs(knotens) do
+    if knot.id == id then
       return knot
     end
   end
