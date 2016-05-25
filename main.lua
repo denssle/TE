@@ -19,7 +19,7 @@ function love.update(dt)
 end
 
 function love.mousepressed(x, y, button, istouch)
-  --createRandomKnotWithTriple(x)
+  --
   knot = knotenmodul.clickCheck(x, y, knotRadius)
   knotenmodul.uncheckAll()
    if button == 1 then -- the primary button
@@ -30,7 +30,11 @@ function love.mousepressed(x, y, button, istouch)
      end
    end
    if button == 2 then
-     deleteClickedKnot(knot)
+     if knot ~= nil then
+       deleteClickedKnot(knot)
+     else
+       createRandomKnotWithTriple(x)
+     end
    end
 end
 
@@ -97,8 +101,8 @@ function createKnot(x, y)
   integradeKnot(knot)
 end
 
-function createRandomKnotWithTriple(x)
-  knot = knotenmodul.createRandomKnot(x)
+function createRandomKnotWithTriple()
+  knot = knotenmodul.createRandomKnot()
   integradeKnot(knot)
 end
 
