@@ -20,7 +20,8 @@ function love.mousepressed(x, y, button, istouch)
    if button == 1 then -- the primary button
      knot = knotenmodul.clickCheck(x, y, knotRadius)
      if not clickKnot(knot) then
-       createRandomKnotWithTriple(x)
+       --createRandomKnotWithTriple(x)
+       createKnot(x, y)
      end
    end
 end
@@ -73,8 +74,17 @@ function drawKnotens()
   end
 end
 
+function createKnot(x, y)
+  knot = knotenmodul.createKnot(x, y, x+y)
+  integradeKnot(knot)
+end
+
 function createRandomKnotWithTriple(x)
   knot = knotenmodul.createRandomKnot(x)
+  integradeKnot(knot)
+end
+
+function integradeKnot(knot)
   newKnot = {}
   table.insert(newKnot, knot)
   cacheKnotens = knotenmodul.getKnotens()

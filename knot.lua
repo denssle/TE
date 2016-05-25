@@ -19,7 +19,6 @@ function knotenmodul.createRandomKnot(name)
   randX = love.math.random(1, max)
   randY = love.math.random(1, max)
   knot = knotenmodul.createKnot(randX, randY, name)
-  table.insert(knotens, knot)
   return knot
 end
 
@@ -31,6 +30,7 @@ function knotenmodul.createKnot(randX, randY, name)
   knot.name = name
   knot.id = love.math.random(0, 1000000) + love.math.random(0, 1000000)
   knot.check = false
+  table.insert(knotens, knot)
   return knot
 end
 
