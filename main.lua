@@ -5,9 +5,12 @@ local triplemodul = require "triple"
 local armymodul= require "army"
 local knotRadius = 15
 local checkedKnotID = nil
+local knotIMG = nil
 
 function love.load(arg)
-  love.graphics.setBackgroundColor(104, 136, 248) --set the background color to a nice blue
+  love.graphics.setBackgroundColor( 100 , 100 , 100 )
+  knotIMG = love.graphics.newImage( '/assets/ball.png' )
+  -- knotIMG = love.image.newImage( knotRadius, knotRadius, nil )
   createKnotsAndTripels()
 end
 
@@ -81,7 +84,8 @@ function drawKnotens()
       else
         love.graphics.setColor(255, 255, 255)
       end
-      love.graphics.rectangle("fill", knot.x, knot.y, knotRadius, knotRadius) --( mode, x, y, width, height )
+      --love.graphics.rectangle("fill", knot.x, knot.y, knotRadius, knotRadius) --( mode, x, y, width, height )
+      love.graphics.draw(knotIMG, knot.x, knot.y)
       love.graphics.print(knot.name, knot.x, knot.y+knotRadius+5)
       drawArmy(knot)
     end
@@ -90,7 +94,7 @@ end
 
 function drawArmy(knot)
   if knot.army ~= nil then
-    love.graphics.circle( "line", knot.x, knot.y, knotRadius * 1.5, 25 )
+    -- love.graphics.circle( "line", knot.x, knot.y, knotRadius * 1.5, 25 )
     love.graphics.print(knot.army.strength, knot.x+knotRadius * 2, knot.y)
   end
 end

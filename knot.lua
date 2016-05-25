@@ -1,5 +1,6 @@
 local knotenmodul = {}
 local knotens = {}
+local img = nil
 
 function knotenmodul.getKnotens()
   return knotens
