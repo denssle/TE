@@ -39,7 +39,7 @@ function createKnotsAndTripels()
   knotenmodul.deleteAllKnots()
   triplemodul.deleteAllTriples()
 
-  cacheKnotens = knotenmodul.createKnotens(10)
+  cacheKnotens = knotenmodul.createKnotens(1)
   knotens = knotenmodul.getKnotens()
   triplemodul.createTripels(cacheKnotens, knotens)
   print("Knots & Triples erstellt. ")
