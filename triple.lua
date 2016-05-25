@@ -18,13 +18,11 @@ function triplemodul.createTripels(cacheKnotens, knotens)
 end
 
 function triplemodul.createTripel(knot, knot2)
-  dis = triplemodul.getDistance(knot, knot2)
-  options = triplemodul.createOptions(dis)
+  options = triplemodul.createOptions(knot, knot2)
   print(knot.name, " - ", knot2.name, "short: ", options.short, "distance", dis)
   trip = {}
   trip.knotA = knot
   trip.knotB = knot2
-  trip.killMe = false
   trip.option = options
   table.insert(tripels, trip)
   return trip
@@ -39,17 +37,25 @@ function triplemodul.getDistance(knot1, knot2)
   return math.ceil(distance)
 end
 
-function triplemodul.createOptions(dis)
+function triplemodul.createOptions(knotA, knotB)
+  dis = triplemodul.getDistance(knotA, knotB)
+
   s = false
   if(dis < radius) then
     s = true
+  end
+
+  knotCheck = false
+  if knotA.check or knotB.check then
+    knotCheck = true
   end
 
   op = {}
   op.short = s
   op.id = love.math.random(0, 1000000) * love.math.random(0, 1000000)
   op.distance = dis
-
+  op.killMe = false
+  op.check = knotCheck
   return op
 end
 
@@ -68,8 +74,7 @@ function triplemodul.updateTriple(triple)
   trip.knotA = triple.knotA
   trip.knotB = triple.knotB
 
-  dis = getDistance(triple.knotA, triple.knotB)
-  options = createOptions(dis)
+  options = createOptions(triple.knotA, triple.knotB)
 
   print("old", triple.option.distance, "neu", dis)
 
@@ -80,11 +85,10 @@ end
 function triplemodul.updateTriples()
   for i, trip in ipairs(tripels) do
     if trip.knotA.killMe or trip.knotB.killMe then
-      trip.killMe = true
+      trip.option.killMe = true
       table.remove(tripels, i)
     else
-      dis = triplemodul.getDistance(trip.knotA, trip.knotB)
-      options = triplemodul.createOptions(dis)
+      options = triplemodul.createOptions(trip.knotA, trip.knotB)
       trip.option = options
     end
   end
@@ -97,7 +101,7 @@ end
 function triplemodul.deleteTriplesFromKnot(knot)
   for i, trip in ipairs(tripels) do
     if trip.knotA.id == knot.id or trip.knotB.id == knot.id then
-      trip.killMe = true
+      trip.option.killMe = true
       table.remove(tripels, i)
     end
   end
@@ -105,7 +109,7 @@ end
 
 function triplemodul.killTriples()
   for i, trip in ipairs(tripels) do
-    if trip.killMe then
+    if trip.option.killMe then
       table.remove(tripels, i)
     end
   end

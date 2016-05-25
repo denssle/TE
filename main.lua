@@ -19,12 +19,18 @@ function love.update(dt)
 end
 
 function love.mousepressed(x, y, button, istouch)
+  --createRandomKnotWithTriple(x)
+  knot = knotenmodul.clickCheck(x, y, knotRadius)
+  knotenmodul.uncheckAll()
    if button == 1 then -- the primary button
-     knot = knotenmodul.clickCheck(x, y, knotRadius)
-     if not clickKnot(knot) then
-       --createRandomKnotWithTriple(x)
+     if knot ~= nil then
+       markKnot(knot)
+     else
        createKnot(x, y)
      end
+   end
+   if button == 2 then
+     deleteClickedKnot(knot)
    end
 end
 
@@ -49,10 +55,15 @@ function drawTriples()
   if triples  ~= nil then
     for i, trip in ipairs(triplemodul.getTriples()) do
       if not trip.killMe then
+        love.graphics.setColor(0, 0, 255)
         if trip.option.short then
           love.graphics.setColor(255, 0, 0)
-        else
-          love.graphics.setColor(0, 0, 255)
+        end
+
+        love.graphics.setLineWidth( 1 )
+        if trip.option.check then
+          love.graphics.setLineWidth( 3 )
+          love.graphics.setColor(0, 250, 0)
         end
         love.graphics.line(trip.knotA.x, trip.knotA.y, trip.knotB.x, trip.knotB.y)
       end
@@ -99,13 +110,13 @@ function integradeKnot(knot)
   knotenmodul.addKnot(knot)
 end
 
-function clickKnot(knot)
-  knotenmodul.uncheckAll()
+function deleteClickedKnot(knot)
   if(knot ~= nil) then
-    --knot.check = true
     knotenmodul.deleteKnot(knot)
     triplemodul.deleteTriplesFromKnot(knot)
-    return true
   end
-  return false
+end
+
+function markKnot(knot)
+  knot.check = true
 end
