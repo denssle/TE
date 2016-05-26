@@ -13,7 +13,9 @@ function love.load(arg)
   love.graphics.setBackgroundColor( 100 , 100 , 100 )
   knotIMG = love.graphics.newImage( '/assets/ball.png' )
   buttonIMG = love.graphics.newImage( '/assets/buttonEmpty.png' )
-  buttonmodul.createButton(20, 600, buttonIMG, "Next round") -- x, y, img, label
+  buttonmodul.createButton(20, 700, buttonIMG, "Next round") -- x, y, img, label
+  buttonmodul.createButton(130, 700, buttonIMG, "Do Shit") -- other Button
+
   createKnotsAndTripels()
 end
 
@@ -153,9 +155,10 @@ function leftClick(knot, x,y)
       checkedKnotID = knot.id
     else --Click nothing
       local btn = buttonmodul.getButtonForClick(x, y)
-      handleButton(btn)
       if btn == nil then --Button was pressed
         createKnot(x, y) --create a knot there
+      else
+        handleButton(btn)
       end
     end
   end
@@ -207,7 +210,9 @@ function updateArmy(knot)
 end
 
 function handleButton(btn)
-  if btn.label == "Next round" then
-    roundmodul.incrementRound()
+  if btn ~= nil then
+    if btn.label == "Next round" then
+      roundmodul.incrementRound()
+    end
   end
 end
