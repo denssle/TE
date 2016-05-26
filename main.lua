@@ -4,6 +4,7 @@ local knotenmodul = require "knot"
 local triplemodul = require "triple"
 local armymodul= require "army"
 local buttonmodul = require "button"
+local roundmodul = require "rounds"
 local knotRadius = 15
 local checkedKnotID = nil
 local knotIMG = nil
@@ -12,7 +13,7 @@ function love.load(arg)
   love.graphics.setBackgroundColor( 100 , 100 , 100 )
   knotIMG = love.graphics.newImage( '/assets/ball.png' )
   buttonIMG = love.graphics.newImage( '/assets/buttonEmpty.png' )
-  buttonmodul.createButton(20, 600, buttonIMG, "text") -- x, y, img, label
+  buttonmodul.createButton(20, 600, buttonIMG, "Next round") -- x, y, img, label
   createKnotsAndTripels()
 end
 
@@ -37,7 +38,7 @@ end
 
 function love.draw(dt)
   drawTriples()
-  drawFPS()
+  drawRoundsAndFPS()
   drawKnotens()
   drawButtons()
 end
@@ -73,9 +74,10 @@ function drawTriples()
   end
 end
 
-function drawFPS()
+function drawRoundsAndFPS()
   love.graphics.setColor(255, 255, 255)
   love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), 10, 10)
+  love.graphics.print("Round: "..tostring(roundmodul.getRound()), 10, 20)
 end
 
 function drawKnotens()
@@ -106,7 +108,7 @@ function drawButtons()
   local buttons = buttonmodul.getButtons()
   for i, buttn in ipairs(buttons) do
     love.graphics.draw(buttn.img, buttn.x, buttn.y)
-    love.graphics.print(buttn.label, buttn.x + (buttn.width / 2), buttn.y+ (buttn.height / 2))
+    love.graphics.print(buttn.label, buttn.x + (buttn.width / 10), buttn.y+ (buttn.height / 3))
   end
 end
 
@@ -151,7 +153,8 @@ function leftClick(knot, x,y)
       checkedKnotID = knot.id
     else --Click nothing
       local btn = buttonmodul.getButtonForClick(x, y)
-      if btn == nil then
+      handleButton(btn)
+      if btn == nil then --Button was pressed
         createKnot(x, y) --create a knot there
       end
     end
@@ -201,4 +204,10 @@ end
 
 function updateArmy(knot)
   knot.army.strength = knot.army.strength + 1
+end
+
+function handleButton(btn)
+  if btn.label == "Next round" then
+    roundmodul.incrementRound()
+  end
 end
