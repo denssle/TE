@@ -3,6 +3,7 @@ debug = true
 local knotenmodul = require "knot"
 local triplemodul = require "triple"
 local armymodul= require "army"
+local buttonmodul = require "button"
 local knotRadius = 15
 local checkedKnotID = nil
 local knotIMG = nil
@@ -10,7 +11,8 @@ local knotIMG = nil
 function love.load(arg)
   love.graphics.setBackgroundColor( 100 , 100 , 100 )
   knotIMG = love.graphics.newImage( '/assets/ball.png' )
-  -- knotIMG = love.image.newImage( knotRadius, knotRadius, nil )
+  buttonIMG = love.graphics.newImage( '/assets/buttonEmpty.png' )
+  buttonmodul.createButton(20, 600, buttonIMG, "text") -- x, y, img, label
   createKnotsAndTripels()
 end
 
@@ -24,7 +26,7 @@ function love.update(dt)
 end
 
 function love.mousepressed(x, y, button, istouch)
-  knot = knotenmodul.getKnotForClick(x, y, knotRadius)
+  local knot = knotenmodul.getKnotForClick(x, y, knotRadius)
    if button == 1 then -- the primary button
      leftClick(knot, x,y)
    end
@@ -37,6 +39,7 @@ function love.draw(dt)
   drawTriples()
   drawFPS()
   drawKnotens()
+  drawButtons()
 end
 
 function createKnotsAndTripels()
@@ -50,7 +53,7 @@ function createKnotsAndTripels()
 end
 
 function drawTriples()
-  triples = triplemodul.getTriples()
+  local triples = triplemodul.getTriples()
   if triples  ~= nil then
     for i, trip in ipairs(triplemodul.getTriples()) do
       if not trip.killMe then
@@ -76,8 +79,8 @@ function drawFPS()
 end
 
 function drawKnotens()
-  knotens = knotenmodul.getKnotens()
-  for id, knot in ipairs(knotens) do
+  local knotens = knotenmodul.getKnotens()
+  for i, knot in ipairs(knotens) do
     if not knot.killMe then
       if knot.check then
         love.graphics.setColor(255, 0, 0)
@@ -96,6 +99,14 @@ function drawArmy(knot)
   if knot.army ~= nil then
     -- love.graphics.circle( "line", knot.x, knot.y, knotRadius * 1.5, 25 )
     love.graphics.print(knot.army.strength, knot.x+knotRadius * 2, knot.y)
+  end
+end
+
+function drawButtons()
+  local buttons = buttonmodul.getButtons()
+  for i, buttn in ipairs(buttons) do
+    love.graphics.draw(buttn.img, buttn.x, buttn.y)
+    love.graphics.print(buttn.label, buttn.x + (buttn.width / 2), buttn.y+ (buttn.height / 2))
   end
 end
 
@@ -139,7 +150,10 @@ function leftClick(knot, x,y)
       knot.check = true --we check the knot
       checkedKnotID = knot.id
     else --Click nothing
-      createKnot(x, y) --create a knot there
+      local btn = buttonmodul.getButtonForClick(x, y)
+      if btn == nil then
+        createKnot(x, y) --create a knot there
+      end
     end
   end
 end

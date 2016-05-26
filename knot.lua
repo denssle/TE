@@ -57,9 +57,9 @@ end
 
 function knotenmodul.getKnotForClick(x, y, param)
   xlow = x - param
-  xhigh = x -- + param
+  xhigh = x + 5
   ylow = y - param
-  yhigh = y -- + param
+  yhigh = y + 5
 
   for xi = xlow, xhigh, 1 do
     for yi = ylow, yhigh, 1 do
