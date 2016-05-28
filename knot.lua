@@ -6,24 +6,24 @@ function knotenmodul.getKnotens()
   return knotens
 end
 
-function knotenmodul.createKnotens(nbr)
+function knotenmodul.createKnotens(nbr, owner)
   cacheKnotens = {}
   for i = 1, nbr do
-    knot = knotenmodul.createRandomKnot()
+    knot = knotenmodul.createRandomKnot(owner)
     table.insert(cacheKnotens, knot)
   end
   return cacheKnotens
 end
 
-function knotenmodul.createRandomKnot()
+function knotenmodul.createRandomKnot(owner)
   local max = love.graphics.getWidth()
   local randX = love.math.random(1, max)
   local randY = love.math.random(1, max)
-  local name = "x "..randX.." y "..randY
-  return knotenmodul.createKnot(randX, randY, name)
+  local name = owner.name.."\nx "..randX.." y "..randY
+  return knotenmodul.createKnot(randX, randY, name, owner)
 end
 
-function knotenmodul.createKnot(randX, randY, name)
+function knotenmodul.createKnot(randX, randY, name, owner)
   local knot = {}
   knot.x = randX
   knot.y = randY
@@ -32,6 +32,7 @@ function knotenmodul.createKnot(randX, randY, name)
   knot.check = false
   knot.killMe = false
   knot.army = nil
+  knot.player = owner
   print("createKnot", knot.name, "x", knot.x, "y", knot.y, "id", knot.id)
   table.insert(knotens, knot)
   return knot

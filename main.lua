@@ -4,7 +4,9 @@ local knotenmodul = require "knot"
 local triplemodul = require "triple"
 local armymodul= require "army"
 local buttonmodul = require "button"
-local roundmodul = require "rounds"
+local roundmodul = require "round"
+local playermodul = require "player"
+
 local knotRadius = 15
 local checkedKnotID = nil
 local knotIMG = nil
@@ -14,8 +16,8 @@ function love.load(arg)
   knotIMG = love.graphics.newImage( '/assets/ball.png' )
   buttonIMG = love.graphics.newImage( '/assets/buttonEmpty.png' )
   buttonmodul.createButton(20, 700, buttonIMG, "Next round") -- x, y, img, label
-  buttonmodul.createButton(130, 700, buttonIMG, "Do Shit") -- other Button
 
+  createPlayers()
   createKnotsAndTripels()
 end
 
@@ -45,13 +47,21 @@ function love.draw(dt)
   drawButtons()
 end
 
-function createKnotsAndTripels()
-  knotenmodul.deleteAllKnots()
-  triplemodul.deleteAllTriples()
+function createPlayers()
+  red = playermodul.createPlayer("RED")
+  blue = playermodul.createPlayer("BLUE")
+end
 
-  cacheKnotens = knotenmodul.createKnotens(1)
-  knotens = knotenmodul.getKnotens()
-  triplemodul.createTripels(cacheKnotens, knotens)
+function createKnotsAndTripels()
+  -- knotenmodul.deleteAllKnots()
+  -- triplemodul.deleteAllTriples()
+
+  --cacheKnotens = knotenmodul.createKnotens(1)
+  for i, player in ipairs(playermodul.getPlayers()) do
+    cacheKnotens = knotenmodul.createKnotens( 2, player )
+    knotens = knotenmodul.getKnotens()
+    triplemodul.createTripels(cacheKnotens, knotens)
+  end
   print("Knots & Triples erstellt. ")
 end
 
@@ -89,7 +99,7 @@ function drawKnotens()
       if knot.check then
         love.graphics.setColor(255, 0, 0)
       else
-        love.graphics.setColor(255, 255, 255)
+        love.graphics.setColor(knot.player.color.red, knot.player.color.green, knot.player.color.blue)
       end
       --love.graphics.rectangle("fill", knot.x, knot.y, knotRadius, knotRadius) --( mode, x, y, width, height )
       love.graphics.draw(knotIMG, knot.x, knot.y)
@@ -108,6 +118,7 @@ end
 
 function drawButtons()
   local buttons = buttonmodul.getButtons()
+  love.graphics.setColor(255, 255, 255)
   for i, buttn in ipairs(buttons) do
     love.graphics.draw(buttn.img, buttn.x, buttn.y)
     love.graphics.print(buttn.label, buttn.x + (buttn.width / 10), buttn.y+ (buttn.height / 3))
@@ -212,7 +223,11 @@ end
 function handleButton(btn)
   if btn ~= nil then
     if btn.label == "Next round" then
-      roundmodul.incrementRound()
+      nextRound()
     end
   end
+end
+
+function nextRound()
+  roundmodul.incrementRound()
 end
