@@ -1,30 +1,57 @@
 debug = true
 
+local utf8 = require("utf8")
+
 local knotenmodul = require "knot"
 local triplemodul = require "triple"
 local armymodul= require "army"
 local buttonmodul = require "button"
 local roundmodul = require "round"
 local playermodul = require "player"
+local c = require "statics"
+
 
 local knotRadius = 15
 local checkedKnotID = nil
 local knotIMG = nil
+local buttonIMG = nil
 
 function love.load(arg)
   love.graphics.setBackgroundColor( 100 , 100 , 100 )
   knotIMG = love.graphics.newImage( '/assets/ball.png' )
   buttonIMG = love.graphics.newImage( '/assets/buttonEmpty.png' )
-  buttonmodul.createButton(20, 700, buttonIMG, "Next round") -- x, y, img, label
+  buttonmodul.createButton(buttonIMG, c.nextRound) -- img, label
 
   createPlayers()
   createKnotsAndTripels()
+
+  --text
+  text = ""
+  love.keyboard.setKeyRepeat(true)
+end
+
+-- text
+function love.textinput(t)
+    text = text .. t
+end
+
+function love.keypressed(key)
+    if key == "backspace" then
+        -- get the byte offset to the last UTF-8 character in the string.
+        local byteoffset = utf8.offset(text, -1)
+
+        if byteoffset then
+            -- remove the last UTF-8 character.
+            -- string.sub operates on bytes rather than UTF-8 characters, so we couldn't do string.sub(text, 1, -2).
+            text = string.sub(text, 1, byteoffset - 1)
+        end
+    end
+    if key == 'escape' then
+      love.event.push('quit')
+    end
 end
 
 function love.update(dt)
-  if love.keyboard.isDown('escape') then
-    love.event.push('quit')
-  end
   triplemodul.killTriples()
   triplemodul.updateTriples()
   knotenmodul.killKnots()
@@ -95,6 +122,7 @@ function drawRoundsAndPlayerAndFPS()
   love.graphics.print("Round: "..tostring(roundmodul.getRound()), 10, 20)
   love.graphics.print("Player: "..tostring(playermodul.getActivPlayer().name), 10, 30)
   love.graphics.print("Actions: "..tostring(playermodul.getActivPlayer().actions), 10, 40)
+  love.graphics.printf(text, 10, 50, love.graphics.getWidth())
 end
 
 function drawKnotens()
@@ -124,7 +152,7 @@ end
 function drawButtons()
   local buttons = buttonmodul.getButtons()
   love.graphics.setColor(255, 255, 255)
-  for i, buttn in ipairs(buttons) do
+  for i, buttn in pairs(buttons) do
     love.graphics.draw(buttn.img, buttn.x, buttn.y)
     love.graphics.print(buttn.label, buttn.x + (buttn.width / 10), buttn.y+ (buttn.height / 3))
   end
@@ -192,7 +220,7 @@ function leftClickNoCheckedKnot(clickedKnot, x,y)
     checkedKnotID = knot.id
   else --Click button or nothing
     local btn = buttonmodul.getButtonForClick(x, y)
-    if btn ~= nil then --nothing clicked
+    if btn ~= nil then --button clicked
       handleButton(btn)
     end
   end
@@ -219,7 +247,7 @@ end
 
 function handleButton(btn)
   if btn ~= nil then
-    if btn.label == "Next round" then
+    if btn.label == c.nextRound then
       nextRound()
     end
   end

@@ -11,7 +11,7 @@ function armymodul.createArmy(knot)
   army.strength = 1
   army.knot = knot
   army.player = knot.player
-  table.insert(armys, army)
+  armys[army.id] = army
   return army
 end
 
