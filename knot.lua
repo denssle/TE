@@ -9,17 +9,17 @@ end
 function knotenmodul.createKnotens(nbr, owner)
   cacheKnotens = {}
   for i = 1, nbr do
-    knot = knotenmodul.createRandomKnot(owner)
+    knot = knotenmodul.createRandomKnot(i, owner)
     table.insert(cacheKnotens, knot)
   end
   return cacheKnotens
 end
 
-function knotenmodul.createRandomKnot(owner)
+function knotenmodul.createRandomKnot(i, owner)
   local max = love.graphics.getWidth()
   local randX = love.math.random(1, max)
   local randY = love.math.random(1, max)
-  local name = owner.name.."\nx "..randX.." y "..randY
+  local name = owner.name..i
   return knotenmodul.createKnot(randX, randY, name, owner)
 end
 

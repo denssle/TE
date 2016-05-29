@@ -10,15 +10,17 @@ function armymodul.createArmy(knot)
   army.id = love.math.random(0, 1000000) * love.math.random(0, 1000000)
   army.strength = 1
   army.knot = knot
+  army.player = knot.player
   table.insert(armys, army)
   return army
 end
 
-function armymodul.createArmyFromOld(id, strength, knot)
+function armymodul.createArmyFromOld(id, strength, player, knot)
   local army = {}
   army.id = id
   army.strength = strength
   army.knot = knot
+  army.player = player
   table.insert(armys, army)
   return army
 end
@@ -32,21 +34,50 @@ function armymodul.removeArmy(delarmy)
 end
 
 function armymodul.moveArmy(destination, knot)
-  print("d army", destination.army, "k army", knot.army)
-  local a = knot.army
-  armymodul.removeArmy(a)
-  local newarmy = armymodul.createArmyFromOld(a.id, a.strength, destination)
-  destination.army = newarmy
-  knot.army = nil
-  print("d army", destination.army, "k army", knot.army)
+  if destination.army == nil then -- no army at the destination
+    print("move")
+    local a = knot.army
+    armymodul.removeArmy(a)
+    local newarmy = armymodul.createArmyFromOld(a.id, a.strength, a.player, destination)
+    destination.army = newarmy
+    knot.army = nil
+    destination.player = knot.player
+  elseif destination.player.id == knot.player.id then -- destination belongs to the player
+    armymodul.combineForces(destination, knot)
+    destination.player = knot.player
+  else
+    armymodul.fight(destination, knot)
+  end
 end
 
 function armymodul.combineForces(destination, knot)
   local da = destination.army
   local ka = destination.army
+  print("combineForces", "destination", da.strength, "origin", ka.strength)
   da.strength = da.strength + ka.strength
   armymodul.removeArmy(ka)
   knot.army = nil
+end
+
+function armymodul.fight(destination, knot)
+  print("fight")
+  -- die angreifer können überlegen, gleichstark oder unterlegen sein
+  defArmy = destination.army
+  attacArmy = knot.army
+  if defArmy.strength < attacArmy.strength then
+    print("angreifer erobert destination")
+    defArmy.strength = attacArmy.strength - defArmy.strength
+    armymodul.removeArmy(defArmy)
+    destination.player = knot.player
+    knot.army = nil
+  elseif defArmy.strength == attacArmy.strength then
+    print("gleichstark")
+  else
+    print("angreifer verliert")
+    defArmy.strength = defArmy.strength - attacArmy.strength
+    knot.army = nil
+    armymodul.removeArmy(attacArmy)
+  end
 end
 
 return armymodul

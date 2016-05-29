@@ -28,21 +28,25 @@ function love.update(dt)
   triplemodul.killTriples()
   triplemodul.updateTriples()
   knotenmodul.killKnots()
+
+  if not playermodul.enoughtActionsLeft() then
+    playermodul.nextPlayer()
+  end
 end
 
 function love.mousepressed(x, y, button, istouch)
-  local knot = knotenmodul.getKnotForClick(x, y, knotRadius)
+  local clickedKnot = knotenmodul.getKnotForClick(x, y, knotRadius)
    if button == 1 then -- the primary button
-     leftClick(knot, x,y)
+     leftClick(clickedKnot, x,y)
    end
    if button == 2 then
-     rightClick(knot, x,y)
+     rightClick(clickedKnot, x,y)
    end
 end
 
 function love.draw(dt)
   drawTriples()
-  drawRoundsAndFPS()
+  drawRoundsAndPlayerAndFPS()
   drawKnotens()
   drawButtons()
 end
@@ -55,10 +59,9 @@ end
 function createKnotsAndTripels()
   -- knotenmodul.deleteAllKnots()
   -- triplemodul.deleteAllTriples()
-
   --cacheKnotens = knotenmodul.createKnotens(1)
-  for i, player in ipairs(playermodul.getPlayers()) do
-    cacheKnotens = knotenmodul.createKnotens( 2, player )
+  for i, player in pairs(playermodul.getPlayers()) do
+    cacheKnotens = knotenmodul.createKnotens( 2 , player )
     knotens = knotenmodul.getKnotens()
     triplemodul.createTripels(cacheKnotens, knotens)
   end
@@ -86,10 +89,12 @@ function drawTriples()
   end
 end
 
-function drawRoundsAndFPS()
+function drawRoundsAndPlayerAndFPS()
   love.graphics.setColor(255, 255, 255)
   love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), 10, 10)
   love.graphics.print("Round: "..tostring(roundmodul.getRound()), 10, 20)
+  love.graphics.print("Player: "..tostring(playermodul.getActivPlayer().name), 10, 30)
+  love.graphics.print("Actions: "..tostring(playermodul.getActivPlayer().actions), 10, 40)
 end
 
 function drawKnotens()
@@ -143,80 +148,72 @@ function integradeKnot(knot)
   triplemodul.createTripels(cacheKnotens, newKnot)
 end
 
+--[[
 function deleteClickedKnot(knot)
   if(knot ~= nil) then
     knotenmodul.deleteKnot(knot)
     triplemodul.deleteTriplesFromKnot(knot)
   end
 end
+]]--
 
-function leftClick(knot, x,y)
+function leftClick(clickedKnot, x,y)
   knotenmodul.uncheckAll()
   if checkedKnotID ~= nil then --We have a checked Knot
-    checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
-    if checkedKnot ~= nil and checkedKnot.army ~= nil then
-      moveCheckedArmy(checkedKnot, x, y)
-    else
-      moveCheckedKnot(checkedKnot, x, y) --We move the knot to new position
-    end
-    checkedKnotID = nil
+    leftClickCheckedKnot(clickedKnot, x,y)
   else -- No checked Knot
-    if knot ~= nil then --We clicked a knot
-      knot.check = true --we check the knot
-      checkedKnotID = knot.id
-    else --Click nothing
-      local btn = buttonmodul.getButtonForClick(x, y)
-      if btn == nil then --Button was pressed
-        createKnot(x, y) --create a knot there
-      else
-        handleButton(btn)
-      end
-    end
+    leftClickNoCheckedKnot(clickedKnot, x,y)
   end
 end
 
-function moveCheckedKnot(checkedKnot, x, y)
-  if checkedKnot ~= nil then
-    checkedKnot.x = x
-    checkedKnot.y = y
-  end
-end
-
-function moveCheckedArmy(checkedKnot, x, y)
-  destination = knotenmodul.getKnotForClick(x, y, knotRadius)
-  if destination ~= nil and destination.id ~= checkedKnot.id then
-    if destination.army ~= nil then --We have already an army
-      armymodul.combineForces(destination, checkedKnot)
+function rightClick(clickedKnot, x, y)
+  if clickedKnot ~= nil  and clickedKnot.player.id == playermodul.getActivPlayer().id then -- we rclicked a knot
+    if clickedKnot.army ~= nil then
+      updateArmy(clickedKnot)
     else
-      armymodul.moveArmy(destination, checkedKnot)
+      createArmy(clickedKnot)
     end
   end
 end
 
-function rightClick(knot, x, y)
-  if knot ~= nil then
-    --deleteClickedKnot(knot)
-    rclickedArmy(knot)
-  else
-    createRandomKnotWithTriple(x)
+function leftClickCheckedKnot(clickedKnot, x,y)
+  checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
+  if checkedKnot ~= nil and checkedKnot.army ~= nil then
+    if checkedKnot.player.id == playermodul.getActivPlayer().id then
+      moveCheckedArmy(checkedKnot, clickedKnot, x, y)
+    end
+  end
+  checkedKnotID = nil
+end
+
+function leftClickNoCheckedKnot(clickedKnot, x,y)
+  if clickedKnot ~= nil then --We clicked a knot
+    clickedKnot.check = true --we check the knot
+    checkedKnotID = knot.id
+  else --Click button or nothing
+    local btn = buttonmodul.getButtonForClick(x, y)
+    if btn ~= nil then --nothing clicked
+      handleButton(btn)
+    end
   end
 end
 
-
-function rclickedArmy(knot)
-  if knot.army ~= nill then
-    updateArmy(knot)
-  else
-    createArmy(knot)
+function moveCheckedArmy(checkedKnot, clickedKnot, x, y)
+  destination = clickedKnot --knotenmodul.getKnotForClick(x, y, knotRadius)
+  if destination ~= nil and destination.id ~= checkedKnot.id then
+    armymodul.moveArmy(destination, checkedKnot)
+    playermodul.makeAction()
   end
 end
 
 function createArmy(knot)
-  newArmy = armymodul.createArmy()
+  playermodul.makeAction()
+  newArmy = armymodul.createArmy(knot)
   knot.army = newArmy
 end
 
 function updateArmy(knot)
+  playermodul.makeAction()
   knot.army.strength = knot.army.strength + 1
 end
 
@@ -230,4 +227,5 @@ end
 
 function nextRound()
   roundmodul.incrementRound()
+  playermodul.nextPlayer()
 end
