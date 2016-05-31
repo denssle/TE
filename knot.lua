@@ -7,18 +7,15 @@ function knotenmodul.getKnotens()
 end
 
 function knotenmodul.createKnotens(nbr, owner)
-  cacheKnotens = {}
   for i = 1, nbr do
     knot = knotenmodul.createRandomKnot(i, owner)
-    table.insert(cacheKnotens, knot)
   end
-  return cacheKnotens
 end
 
 function knotenmodul.createRandomKnot(i, owner)
   local max = love.graphics.getWidth()
-  local randX = love.math.random(1, max)
-  local randY = love.math.random(1, max)
+  local randX = love.math.random(50, max - 50)
+  local randY = love.math.random(50, max - 200)
   local name = owner.name..i
   return knotenmodul.createKnot(randX, randY, name, owner)
 end
@@ -28,11 +25,12 @@ function knotenmodul.createKnot(randX, randY, name, owner)
   knot.x = randX
   knot.y = randY
   knot.name = name
-  knot.id = love.math.random(0, 1000000) + love.math.random(0, 1000000)
+  knot.id = love.math.random(1, 19283776) + love.math.random(23, 9999123)..name
   knot.check = false
   knot.killMe = false
   knot.army = nil
   knot.player = owner
+  knot.fortification = 0
   print("createKnot", knot.name, "x", knot.x, "y", knot.y, "id", knot.id)
   table.insert(knotens, knot)
   return knot
@@ -106,11 +104,21 @@ function knotenmodul.deleteKnot(delknot)
 end
 
 function knotenmodul.killKnots()
-  for i, knot in pairs(knotens) do
+  for i, knot in ipairs(knotens) do
     if knot.killMe then
        table.remove(knotens, i)
      end
    end
+end
+
+function knotenmodul.getNumberOfKnots(playerID)
+  local nbr = 0
+  for i, knot in pairs(knotens) do
+    if knot.player.id == playerID then
+      nbr = nbr + 1
+    end
+  end
+  return nbr
 end
 
 return knotenmodul

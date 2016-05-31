@@ -2,7 +2,7 @@ local buttonmodul = {}
 local buttons = {}
 local globalX = 20
 
-function buttonmodul.createButton(img, label)
+function buttonmodul.createButton(img, label, knotKontext)
   local X = globalX + 20 -- abstand zwischen den buttons
   local button = {}
   button.x = globalX
@@ -12,6 +12,7 @@ function buttonmodul.createButton(img, label)
   button.width = img:getWidth()
   button.label = label
   button.id = love.math.random(2, 53562) * love.math.random(12, 8899771)..label
+  button.knotKontext = knotKontext
   buttons[button.id] = button
   globalX = X + img:getWidth()
 end

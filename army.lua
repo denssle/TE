@@ -62,19 +62,33 @@ end
 function armymodul.fight(destination, knot)
   print("fight")
   -- die angreifer können überlegen, gleichstark oder unterlegen sein
+  fort = destination.fortification
   defArmy = destination.army
   attacArmy = knot.army
-  if defArmy.strength < attacArmy.strength then
+  defSum = destination.fortification + defArmy.strength
+  if defSum  < attacArmy.strength then
     print("angreifer erobert destination")
     defArmy.strength = attacArmy.strength - defArmy.strength
     armymodul.removeArmy(defArmy)
     destination.player = knot.player
+    destination.fortification = 0
     knot.army = nil
-  elseif defArmy.strength == attacArmy.strength then
+  elseif defSum == attacArmy.strength then
     print("gleichstark")
+    destination.army = nil
+    knot.army = nil
+    armymodul.removeArmy(defArmy)
+    armymodul.removeArmy(attacArmy)
+    destination.fortification = 0
   else
     print("angreifer verliert")
-    defArmy.strength = defArmy.strength - attacArmy.strength
+    deltaDamage = attacArmy.strength - fort
+    if deltaDamage <= 0 then -- fort hat alles aufgehalten
+      destination.fortification = destination.fortification - attacArmy.strength
+    else
+      destination.fortification = 0
+      defArmy.strength = defArmy.strength - deltaDamage
+    end
     knot.army = nil
     armymodul.removeArmy(attacArmy)
   end

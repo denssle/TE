@@ -8,7 +8,7 @@ function playermodul.createPlayer(name)
 
   local player = {}
   player.name = name
-  player.actions = 2
+  player.actions = 0
   player.id = love.math.random(23, 9921312)..name
   player.index = index
   player.color = {}
@@ -44,13 +44,32 @@ end
 
 function playermodul.nextPlayer()
   if activePlayer ~= nil then
-    activePlayer.actions = 2
     if activePlayer.index == index then
       activePlayer = players[1]
     else
       activePlayer = players[activePlayer.index + 1 ]
     end
   end
+  return activePlayer
+end
+
+function playermodul.setActions(nbr)
+  activePlayer.actions = activePlayer.actions + nbr
+end
+
+function playermodul.deletePlayer(playerID)
+  for i, player in pairs(players) do
+    if player.id == playerID then
+      table.remove(players, i)
+    end
+  end
+end
+
+function playermodul.anyPlayersLeft()
+  if table.getn(players) >= 2 then
+    return true
+  end
+  return false
 end
 
 return playermodul

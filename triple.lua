@@ -1,20 +1,39 @@
 local triplemodul = {}
 local tripels = {}
-local radius = 120
+local radius = 200
 
 function triplemodul.getTriples()
   return tripels
 end
 
-function triplemodul.createTripels(cacheKnotens, knotens)
+function triplemodul.createTripels(knotens)
+  local cacheKnotens = copyKnotens(knotens)
   for i, knot in ipairs(knotens) do
-    for j, knot2 in ipairs(cacheKnotens) do
-      if knot.id ~= knot2.id then
-        triplemodul.createTripel(knot, knot2)
+    for j, cknot in ipairs(cacheKnotens) do
+      if knot.id ~= cknot.id then
+        triplemodul.createTripel(knot, cknot)
       end
     end
-    table.remove(cacheKnotens, knot.id)
+    table.remove(cacheKnotens, 1)
   end
+end
+
+function copyKnotens(knotens)
+  cacheKnotens = {}
+  for i, knot in ipairs(knotens) do
+    local cacheKnot = {}
+    cacheKnot.x = knot.x
+    cacheKnot.y = knot.y
+    cacheKnot.name = knot.name
+    cacheKnot.id = knot.id
+    cacheKnot.check = knot.check
+    cacheKnot.killMe = knot.killMe
+    cacheKnot.army = knot.army
+    cacheKnot.player = knot.player
+    cacheKnot.fortification = knot.fortification
+    table.insert(cacheKnotens, cacheKnot)
+  end
+  return cacheKnotens
 end
 
 function triplemodul.createTripel(knot, knot2)
@@ -37,13 +56,15 @@ function triplemodul.getDistance(knot1, knot2)
   return math.ceil(distance)
 end
 
+function triplemodul.isShort(knot1, knot2)
+  if triplemodul.getDistance(knot1, knot2) < radius then
+    return true
+  end
+  return false
+end
+
 function triplemodul.createOptions(knotA, knotB)
   local dis = triplemodul.getDistance(knotA, knotB)
-
-  s = false
-  if(dis < radius) then
-    s = true
-  end
 
   knotCheck = false
   if knotA.check or knotB.check then
@@ -51,7 +72,7 @@ function triplemodul.createOptions(knotA, knotB)
   end
 
   op = {}
-  op.short = s
+  op.short = triplemodul.isShort(knotA, knotB)
   op.id = love.math.random(0, 1000000) * love.math.random(0, 1000000)
   op.distance = dis
   op.killMe = false
