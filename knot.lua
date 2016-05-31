@@ -28,6 +28,7 @@ function knotenmodul.createKnot(randX, randY, name, owner)
   knot.id = love.math.random(1, 19283776) + love.math.random(23, 9999123)..name
   knot.check = false
   knot.killMe = false
+  knot.usedInTrip = false
   knot.army = nil
   knot.player = owner
   knot.fortification = 0
@@ -103,7 +104,7 @@ function knotenmodul.deleteKnot(delknot)
   end
 end
 
-function knotenmodul.killKnots()
+function knotenmodul.deleteDeadKnots()
   for i, knot in ipairs(knotens) do
     if knot.killMe then
        table.remove(knotens, i)

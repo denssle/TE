@@ -12,12 +12,13 @@ local c = require "statics"
 
 local knotCursor = nil
 local normalCursor = nil
-local knotRadius = 15
 local checkedKnotID = nil
 local knotIMG = nil
 local buttonIMG = nil
 local text = nil
 local ready = false
+local knotRadius = 15
+
 function love.load(arg)
   love.graphics.setBackgroundColor( 100 , 100 , 100 )
   knotIMG = love.graphics.newImage( '/assets/ball.png' )
@@ -61,9 +62,10 @@ end
 function love.update(dt)
   if ready then
     if playermodul.anyPlayersLeft() then
-      triplemodul.killTriples()
-      triplemodul.updateTriples()
-      knotenmodul.killKnots()
+      triplemodul.deleteDeadTriples()
+      triplemodul.updateTriplesOptions()
+      knotenmodul.deleteDeadKnots()
+
       local knotsOfActivPlayer = knotenmodul.getNumberOfKnots(playermodul.getActivPlayer().id)
       if knotsOfActivPlayer <= 0 then
         print("No knots left; deletePlayer", playermodul.getActivPlayer().name)
@@ -74,7 +76,7 @@ function love.update(dt)
         nextRound()
       end
     else
-      ready = false
+      ready = false --stopp the game
     end
   end
 end

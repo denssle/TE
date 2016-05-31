@@ -7,38 +7,19 @@ function triplemodul.getTriples()
 end
 
 function triplemodul.createTripels(knotens)
-  local cacheKnotens = copyKnotens(knotens)
   for i, knot in ipairs(knotens) do
-    for j, cknot in ipairs(cacheKnotens) do
-      if knot.id ~= cknot.id then
+    knot.usedInTrip = true
+    for j, cknot in ipairs(knotens) do
+      if cknot.usedInTrip then
         triplemodul.createTripel(knot, cknot)
       end
     end
-    table.remove(cacheKnotens, 1)
   end
-end
-
-function copyKnotens(knotens)
-  cacheKnotens = {}
-  for i, knot in ipairs(knotens) do
-    local cacheKnot = {}
-    cacheKnot.x = knot.x
-    cacheKnot.y = knot.y
-    cacheKnot.name = knot.name
-    cacheKnot.id = knot.id
-    cacheKnot.check = knot.check
-    cacheKnot.killMe = knot.killMe
-    cacheKnot.army = knot.army
-    cacheKnot.player = knot.player
-    cacheKnot.fortification = knot.fortification
-    table.insert(cacheKnotens, cacheKnot)
-  end
-  return cacheKnotens
 end
 
 function triplemodul.createTripel(knot, knot2)
   options = triplemodul.createOptions(knot, knot2)
-  print(knot.name, " - ", knot2.name, "short: ", options.short, "distance", options.distance, "k1 army", knot.army, "k2 army", knot2.army)
+  print(knot.name, " - ", knot2.name, "short: ", options.short, "distance", options.distance, "k1 id", knot.id, "k2 id", knot2.id)
   local trip = {}
   trip.knotA = knot
   trip.knotB = knot2
@@ -90,27 +71,13 @@ function triplemodul.getRandomTriple()
   return trip
 end
 
-function triplemodul.updateTriple(triple)
-  trip = {}
-  trip.knotA = triple.knotA
-  trip.knotB = triple.knotB
-
-  options = createOptions(triple.knotA, triple.knotB)
-
-  print("old", triple.option.distance, "neu", dis)
-
-  trip.option = options
-  return trip
-end
-
-function triplemodul.updateTriples()
+function triplemodul.updateTriplesOptions()
   for i, trip in ipairs(tripels) do
     if trip.knotA.killMe or trip.knotB.killMe then
       trip.option.killMe = true
       table.remove(tripels, i)
     else
-      options = triplemodul.createOptions(trip.knotA, trip.knotB)
-      trip.option = options
+      trip.option = triplemodul.createOptions(trip.knotA, trip.knotB)
     end
   end
 end
@@ -128,7 +95,7 @@ function triplemodul.deleteTriplesFromKnot(knot)
   end
 end
 
-function triplemodul.killTriples()
+function triplemodul.deleteDeadTriples()
   for i, trip in ipairs(tripels) do
     if trip.option.killMe then
       table.remove(tripels, i)
