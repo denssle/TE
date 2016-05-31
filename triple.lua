@@ -73,7 +73,7 @@ function triplemodul.createOptions(knotA, knotB)
 
   op = {}
   op.short = triplemodul.isShort(knotA, knotB)
-  op.id = love.math.random(0, 1000000) * love.math.random(0, 1000000)
+  op.id = love.math.random(0, 1000000) * love.math.random(0, 1000000)+dis..knotA.id..knotB.id
   op.distance = dis
   op.killMe = false
   op.check = knotCheck

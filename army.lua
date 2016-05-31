@@ -7,7 +7,7 @@ end
 
 function armymodul.createArmy(knot)
   local army = {}
-  army.id = love.math.random(0, 1000000) * love.math.random(0, 1000000)
+  army.id = love.math.random(0, 1000000) * love.math.random(0, 1000000)..knot.player.name..knot.id
   army.strength = 1
   army.knot = knot
   army.player = knot.player

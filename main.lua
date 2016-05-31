@@ -180,7 +180,7 @@ function drawButtons()
       love.graphics.draw(buttn.img, buttn.x, buttn.y)
       love.graphics.print(buttn.label, buttn.x + (buttn.width / 10), buttn.y+ (buttn.height / 3))
     else
-      if checkedKnotID ~= nil then --We have a checked Knot
+      if checkedKnotID ~= nil then --We have a checked Knot, draw kontext menu
         love.graphics.draw(buttn.img, buttn.x, buttn.y)
         love.graphics.print(buttn.label, buttn.x + (buttn.width / 10), buttn.y+ (buttn.height / 3))
       end
