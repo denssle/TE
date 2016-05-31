@@ -28,6 +28,8 @@ function love.load(arg)
   buttonmodul.createButton(buttonIMG, c.createKnot, false)
   -- kontext buttons
   buttonmodul.createButton(buttonIMG, c.buildFort, true)
+  buttonmodul.createButton(buttonIMG, c.updateArmy, true)
+  buttonmodul.createButton(buttonIMG, c.buildFarm, true)
 
   normalCursor = love.mouse.getSystemCursor("arrow")
   knotCursor = love.mouse.getSystemCursor("crosshair")
@@ -72,7 +74,7 @@ function love.update(dt)
         playermodul.deletePlayer(playermodul.getActivPlayer().id)
         nextRound()
       end
-      if not playermodul.enoughtActionsLeft() then
+      if not playermodul.enoughtActionsLeft(0) then
         nextRound()
       end
     else
@@ -142,8 +144,12 @@ function drawRoundsAndPlayerAndFPS()
   love.graphics.setColor(255, 255, 255)
   love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), 10, 10)
   love.graphics.print("Round: "..tostring(roundmodul.getRound()), 10, 20)
-  love.graphics.print("Player: "..tostring(playermodul.getActivPlayer().name), 10, 30)
-  love.graphics.print("Actions: "..tostring(playermodul.getActivPlayer().actions), 10, 40)
+  local player = playermodul.getActivPlayer()
+  love.graphics.setColor(player.color.red, player.color.green, player.color.blue)
+  --text, x, y, Orientation (radians), Scale factor (x-axis), Scale factor (y-axis), Origin offset (x-axis), Origin offset (y-axis)
+  love.graphics.print("Player: "..tostring(player.name), 10, 30, 0, 1, 1)
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.print("Actions: "..tostring(player.actions).." / "..knotenmodul.getNumberOfKnots(player.id) , 10, 40)
 end
 
 function drawKnotens()
@@ -165,12 +171,16 @@ end
 
 function drawArmy(knot)
   if knot.army ~= nil then
+    love.graphics.setColor(255, 255, 255)
     love.graphics.print(knot.army.strength, knot.x+knotRadius * 2, knot.y)
   end
   if knot.fortification > 0 then
     love.graphics.setLineWidth( knot.fortification * 2)
     love.graphics.circle( "line", knot.x, knot.y, 20, 25 )
-    --love.graphics.print(knot.fortification, knot.x+knotRadius * 2, knot.y + 10)
+    love.graphics.print("+"..knot.fortification, knot.x+knotRadius * 2, knot.y + 10)
+  end
+  if knot.farm > 0 then
+    love.graphics.print("+"..knot.farm, knot.x+knotRadius * 2, knot.y + 10)
   end
 end
 
@@ -244,26 +254,29 @@ function moveCheckedArmy(checkedKnot, clickedKnot, x, y)
   if destination ~= nil and destination.id ~= checkedKnot.id then
     if triplemodul.isShort(checkedKnot, clickedKnot) then -- short distance
       armymodul.moveArmy(destination, checkedKnot)
-      playermodul.makeAction()
+      playermodul.useAction(1)
     else
       if checkedKnot.player.actions >= 2 then -- long distance
         armymodul.moveArmy(destination, checkedKnot)
-        playermodul.makeAction()
-        playermodul.makeAction()
+        playermodul.useAction(2)
       end
     end
   end
 end
 
 function createArmy(knot)
-  playermodul.makeAction()
-  newArmy = armymodul.createArmy(knot)
-  knot.army = newArmy
+  if knot.player.actions >= 2 then
+    playermodul.useAction(2)
+    newArmy = armymodul.createArmy(knot)
+    knot.army = newArmy
+  end
 end
 
 function updateArmy(knot)
-  playermodul.makeAction()
-  knot.army.strength = knot.army.strength + 1
+  if knot.player.actions >= 2 then
+    playermodul.useAction(2)
+    knot.army.strength = knot.army.strength + 1
+  end
 end
 
 function handleButton(btn)
@@ -273,14 +286,30 @@ function handleButton(btn)
     end
     if btn.label == c.createKnot then
       createKnotInGame(playermodul.getActivPlayer())
-      playermodul.makeAction()
+      playermodul.useAction(1)
     end
-    if btn.label == c.buildFort and checkedKnotID ~= nil then
-      checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
-      if checkedKnot.player.id == playermodul.getActivPlayer().id then
-        fortificateKnot(checkedKnot)
-      end
+    if checkedKnotID ~= nil then
+      handleKontextButtons(btn)
     end
+  end
+end
+
+function handleKontextButtons(btn)
+  local checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
+  if btn.label == c.buildFort then
+    if checkedKnot.player.id == playermodul.getActivPlayer().id then
+      fortificateKnot(checkedKnot)
+    end
+  end
+  if btn.label == c.updateArmy then
+    if checkedKnot.army ~= nil then
+      updateArmy(checkedKnot)
+    else
+      createArmy(checkedKnot)
+    end
+  end
+  if btn.label == c.buildFarm then
+    farmificateKnot(checkedKnot)
   end
 end
 
@@ -292,6 +321,15 @@ function nextRound()
 end
 
 function fortificateKnot(checkedKnot)
-  checkedKnot.fortification = checkedKnot.fortification + 1
-  playermodul.makeAction()
+  if checkedKnot.farm <= 0 then
+    checkedKnot.fortification = checkedKnot.fortification + 1
+    playermodul.useAction(1)
+  end
+end
+
+function farmificateKnot(checkedKnot)
+  if checkedKnot.fortification <= 0 then
+    checkedKnot.farm = checkedKnot.farm + 1
+    playermodul.useAction(1)
+  end
 end

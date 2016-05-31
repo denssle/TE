@@ -32,6 +32,7 @@ function knotenmodul.createKnot(randX, randY, name, owner)
   knot.army = nil
   knot.player = owner
   knot.fortification = 0
+  knot.farm = 0
   print("createKnot", knot.name, "x", knot.x, "y", knot.y, "id", knot.id)
   table.insert(knotens, knot)
   return knot
@@ -116,7 +117,7 @@ function knotenmodul.getNumberOfKnots(playerID)
   local nbr = 0
   for i, knot in pairs(knotens) do
     if knot.player.id == playerID then
-      nbr = nbr + 1
+      nbr = nbr + 1 + knot.farm
     end
   end
   return nbr

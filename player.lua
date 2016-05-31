@@ -31,12 +31,16 @@ function playermodul.makeAction()
   activePlayer.actions = activePlayer.actions - 1
 end
 
-function playermodul.enoughtActionsLeft()
+function playermodul.useAction(nbr)
+  activePlayer.actions = activePlayer.actions - nbr
+end
+
+function playermodul.enoughtActionsLeft(nbr)
   if activePlayer == nil then
     return nil
   end
 
-  if activePlayer.actions <= 0 then
+  if activePlayer.actions <= nbr then
     return false
   end
   return true
