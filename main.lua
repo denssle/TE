@@ -124,17 +124,23 @@ function drawTriples()
   if triples  ~= nil then
     for i, trip in ipairs(triplemodul.getTriples()) do
       if not trip.killMe then
-        love.graphics.setColor(0, 0, 255)
         if trip.option.short then
           love.graphics.setColor(255, 0, 0)
+          if trip.option.check then
+            love.graphics.setLineWidth( 3 )
+          end
+          love.graphics.line(trip.knotA.x, trip.knotA.y, trip.knotB.x, trip.knotB.y)
+        elseif trip.option.medium then
+          love.graphics.setColor(255, 255, 255)
+          if trip.option.check then
+            love.graphics.setLineWidth( 2 )
+          end
+          love.graphics.line(trip.knotA.x, trip.knotA.y, trip.knotB.x, trip.knotB.y)
+        elseif trip.option.long and trip.option.check then
+          love.graphics.setColor(20, 20, 255)
+          love.graphics.setLineWidth( 1 )
+          love.graphics.line(trip.knotA.x, trip.knotA.y, trip.knotB.x, trip.knotB.y)
         end
-
-        love.graphics.setLineWidth( 1 )
-        if trip.option.check then
-          love.graphics.setLineWidth( 3 )
-          love.graphics.setColor(0, 250, 0)
-        end
-        love.graphics.line(trip.knotA.x, trip.knotA.y, trip.knotB.x, trip.knotB.y)
       end
     end
   end
