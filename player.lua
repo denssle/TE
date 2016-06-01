@@ -40,10 +40,10 @@ function playermodul.enoughtActionsLeft(nbr)
     return nil
   end
 
-  if activePlayer.actions <= nbr then
-    return false
+  if activePlayer.actions >= nbr and activePlayer.actions > 0 then
+    return true
   end
-  return true
+  return false
 end
 
 function playermodul.nextPlayer()

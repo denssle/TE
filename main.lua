@@ -259,7 +259,7 @@ function moveCheckedArmy(checkedKnot, clickedKnot)
   if checkedKnot ~= nil and clickedKnot ~= nil then
     local triple = triplemodul.getTriple(checkedKnot, clickedKnot)
     if triple ~= nil and clickedKnot.id ~= checkedKnot.id then
-      if playermodul..enoughtActionsLeft(triple.option.expense) then
+      if playermodul.enoughtActionsLeft(triple.option.expense) then
         playermodul.useAction(triple.option.expense)
         armymodul.moveArmy(clickedKnot, checkedKnot)
       end
