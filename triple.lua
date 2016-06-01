@@ -22,7 +22,7 @@ end
 
 function triplemodul.createTripel(knot, knot2)
   options = triplemodul.createOptions(knot, knot2)
-  print(knot.name, " - ", knot2.name, "distance", options.distance, "short: ", options.short, "medium", options.medium, "long", options.long)
+  print(knot.name, " - ", knot2.name, "distance", options.distance, "short: ", options.short, "medium", options.medium, "long", options.long, "expense", options.expense)
   local trip = {}
   trip.knotA = knot
   trip.knotB = knot2
@@ -48,7 +48,8 @@ function triplemodul.isShort(knot1, knot2)
 end
 
 function triplemodul.isMedium(knot1, knot2)
-  if triplemodul.getDistance(knot1, knot2) < mediumRadius then
+  local dis  = triplemodul.getDistance(knot1, knot2)
+  if dis < mediumRadius and dis >= shortRadius then
     return true
   end
   return false
@@ -63,13 +64,22 @@ function triplemodul.createOptions(knotA, knotB)
   end
 
   op = {}
-  op.short = triplemodul.isShort(knotA, knotB)
+  op.long = false
+  op.short = false
   op.medium = triplemodul.isMedium(knotA, knotB)
-  if not op.shortRadius and not op.medium then
-    op.long = true
-  else
-    op.long = false
+  if not op.medium then
+    op.short = triplemodul.isShort(knotA, knotB)
   end
+
+  if op.short then
+    op.expense = 1
+  elseif op.medium then
+    op.expense = 2
+  else
+    op.long = true
+    op.expense = 3
+  end
+
   op.id = love.math.random(2, 748293412) * love.math.random(9, 776345112)+dis..knotA.id..knotB.id
   op.distance = dis
   op.killMe = false
@@ -117,6 +127,19 @@ function triplemodul.deleteDeadTriples()
       table.remove(tripels, i)
     end
   end
+end
+
+function triplemodul.getTriple(knot1, knot2)
+  for i, trip in ipairs(tripels) do
+    local knotAid = trip.knotA.id
+    local knotBid = trip.knotB.id
+    if knotAid == knot1.id or knotBid == knot1.id then
+      if knotAid == knot2.id or knotBid == knot2.id then
+        return trip
+      end
+    end
+  end
+  return nil
 end
 
 

@@ -113,11 +113,21 @@ function knotenmodul.deleteDeadKnots()
    end
 end
 
-function knotenmodul.getNumberOfKnots(playerID)
+function knotenmodul.getActionsOfPlayerID(playerID)
   local nbr = 0
   for i, knot in pairs(knotens) do
     if knot.player.id == playerID then
       nbr = nbr + 1 + knot.farm
+    end
+  end
+  return nbr
+end
+
+function knotenmodul.getNumberOfKnotsByID(playerID)
+  local nbr = 0
+  for i, knot in pairs(knotens) do
+    if knot.player.id == playerID then
+      nbr = nbr + 1
     end
   end
   return nbr

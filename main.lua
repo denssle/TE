@@ -68,7 +68,7 @@ function love.update(dt)
       triplemodul.updateTriplesOptions()
       knotenmodul.deleteDeadKnots()
 
-      local knotsOfActivPlayer = knotenmodul.getNumberOfKnots(playermodul.getActivPlayer().id)
+      local knotsOfActivPlayer = knotenmodul.getActionsOfPlayerID(playermodul.getActivPlayer().id)
       if knotsOfActivPlayer <= 0 then
         print("No knots left; deletePlayer", playermodul.getActivPlayer().name)
         playermodul.deletePlayer(playermodul.getActivPlayer().id)
@@ -127,13 +127,13 @@ function drawTriples()
         if trip.option.short then
           love.graphics.setColor(255, 0, 0)
           if trip.option.check then
-            love.graphics.setLineWidth( 3 )
+            love.graphics.setLineWidth( 2 )
           end
           love.graphics.line(trip.knotA.x, trip.knotA.y, trip.knotB.x, trip.knotB.y)
         elseif trip.option.medium then
           love.graphics.setColor(255, 255, 255)
           if trip.option.check then
-            love.graphics.setLineWidth( 2 )
+            love.graphics.setLineWidth( 1 )
           end
           love.graphics.line(trip.knotA.x, trip.knotA.y, trip.knotB.x, trip.knotB.y)
         elseif trip.option.long and trip.option.check then
@@ -155,7 +155,7 @@ function drawRoundsAndPlayerAndFPS()
   --text, x, y, Orientation (radians), Scale factor (x-axis), Scale factor (y-axis), Origin offset (x-axis), Origin offset (y-axis)
   love.graphics.print("Player: "..tostring(player.name), 10, 30, 0, 1, 1)
   love.graphics.setColor(255, 255, 255)
-  love.graphics.print("Actions: "..tostring(player.actions).." / "..knotenmodul.getNumberOfKnots(player.id) , 10, 40)
+  love.graphics.print("Actions: "..tostring(player.actions).." / "..knotenmodul.getActionsOfPlayerID(player.id) , 10, 40)
 end
 
 function drawKnotens()
@@ -207,7 +207,7 @@ function drawButtons()
 end
 
 function createKnotInGame(player)
-  local nbr = knotenmodul.getNumberOfKnots(player.id) + 1
+  local nbr = knotenmodul.getNumberOfKnotsByID(player.id) + 1
   knot = knotenmodul.createRandomKnot(nbr, player)
   newKnot = {}
   table.insert(newKnot, knot)
@@ -222,7 +222,7 @@ function leftClick(clickedKnot, x,y)
     handleButton(btn)
   end
   if checkedKnotID ~= nil then --We have a checked Knot
-    leftClickCheckedKnot(clickedKnot, x,y)
+    leftClickCheckedKnot(clickedKnot)
   else -- No checked Knot
     leftClickNoCheckedKnot(clickedKnot, x,y)
   end
@@ -238,11 +238,11 @@ function rightClick(clickedKnot, x, y)
   end
 end
 
-function leftClickCheckedKnot(clickedKnot, x,y)
+function leftClickCheckedKnot(clickedKnot)
   checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
   if checkedKnot ~= nil and checkedKnot.army ~= nil then
     if checkedKnot.player.id == playermodul.getActivPlayer().id then
-      moveCheckedArmy(checkedKnot, clickedKnot, x, y)
+      moveCheckedArmy(checkedKnot, clickedKnot)
     end
   end
   checkedKnotID = nil
@@ -255,16 +255,13 @@ function leftClickNoCheckedKnot(clickedKnot, x,y)
   end
 end
 
-function moveCheckedArmy(checkedKnot, clickedKnot, x, y)
-  destination = clickedKnot --knotenmodul.getKnotForClick(x, y, knotRadius)
-  if destination ~= nil and destination.id ~= checkedKnot.id then
-    if triplemodul.isShort(checkedKnot, clickedKnot) then -- short distance
-      armymodul.moveArmy(destination, checkedKnot)
-      playermodul.useAction(1)
-    else
-      if checkedKnot.player.actions >= 2 then -- long distance
-        armymodul.moveArmy(destination, checkedKnot)
-        playermodul.useAction(2)
+function moveCheckedArmy(checkedKnot, clickedKnot)
+  if checkedKnot ~= nil and clickedKnot ~= nil then
+    local triple = triplemodul.getTriple(checkedKnot, clickedKnot)
+    if triple ~= nil and clickedKnot.id ~= checkedKnot.id then
+      if playermodul..enoughtActionsLeft(triple.option.expense) then
+        playermodul.useAction(triple.option.expense)
+        armymodul.moveArmy(clickedKnot, checkedKnot)
       end
     end
   end
@@ -273,7 +270,7 @@ end
 function createArmy(knot)
   if knot.player.actions >= 2 then
     playermodul.useAction(2)
-    newArmy = armymodul.createArmy(knot)
+    local newArmy = armymodul.createArmy(knot)
     knot.army = newArmy
   end
 end
@@ -321,7 +318,7 @@ end
 
 function nextRound()
   local nextPlayer = playermodul.nextPlayer()
-  local nbr = knotenmodul.getNumberOfKnots(nextPlayer.id)
+  local nbr = knotenmodul.getActionsOfPlayerID(nextPlayer.id)
   playermodul.setActions(nbr)
   roundmodul.incrementRound()
 end
