@@ -3,7 +3,7 @@ local players = {}
 local activePlayer = nil
 local index = 0
 
-function playermodul.createPlayer(name)
+function playermodul.createPlayer(name, red, green, blue)
   index = index + 1
 
   local player = {}
@@ -12,9 +12,9 @@ function playermodul.createPlayer(name)
   player.id = love.math.random(23, 9921312)..name
   player.index = index
   player.color = {}
-  player.color.red = love.math.random(0, 255)
-  player.color.green = love.math.random(0, 255)
-  player.color.blue = love.math.random(0, 255)
+  player.color.red = red
+  player.color.green = green
+  player.color.blue = blue
   players[index] = player
   activePlayer = player
 end

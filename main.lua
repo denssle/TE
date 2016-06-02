@@ -106,8 +106,8 @@ function love.draw(dt)
 end
 
 function createPlayers()
-  red = playermodul.createPlayer("RED")
-  blue = playermodul.createPlayer("BLUE")
+  red = playermodul.createPlayer("RED", 255, 0, 0)
+  blue = playermodul.createPlayer("BLUE", 0, 0, 255)
 end
 
 function createKnotsAndTripels()
@@ -122,6 +122,7 @@ end
 function drawTriples()
   local triples = triplemodul.getTriples()
   if triples  ~= nil then
+    love.graphics.setLineWidth( 1 )
     for i, trip in ipairs(triplemodul.getTriples()) do
       if not trip.killMe then
         if trip.option.short then
