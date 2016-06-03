@@ -1,5 +1,5 @@
 local roundmodul = {}
-local round = 1
+local round = 0
 
 function roundmodul.getRound()
   return round

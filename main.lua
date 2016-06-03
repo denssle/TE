@@ -16,20 +16,26 @@ local checkedKnotID = nil
 local knotIMG = nil
 local buttonIMG = nil
 local text = nil
-local ready = false
+local inGame = false
+local inMenu = false
 local knotRadius = 15
 
 function love.load(arg)
   love.graphics.setBackgroundColor( 100 , 100 , 100 )
   knotIMG = love.graphics.newImage( '/assets/ball.png' )
   buttonIMG = love.graphics.newImage( '/assets/buttonEmpty.png' )
-  -- 'normal' buttons
-  buttonmodul.createButton(buttonIMG, c.nextRound, false) -- img, label, knot kontext
-  buttonmodul.createButton(buttonIMG, c.createKnot, false)
+
+  -- normal menu buttons
+  buttonmodul.createMenuButton(buttonIMG, c.pve, false)
+  buttonmodul.createMenuButton(buttonIMG, c.pvp, false)
+
+  -- 'normal in game' buttons
+  buttonmodul.createInGameButton(buttonIMG, c.nextRound, false) -- img, label, knot kontext
+  buttonmodul.createInGameButton(buttonIMG, c.createKnot, false)
   -- kontext buttons
-  buttonmodul.createButton(buttonIMG, c.buildFort, true)
-  buttonmodul.createButton(buttonIMG, c.updateArmy, true)
-  buttonmodul.createButton(buttonIMG, c.buildFarm, true)
+  buttonmodul.createInGameButton(buttonIMG, c.updateArmy, true)
+  buttonmodul.createInGameButton(buttonIMG, c.buildFort, true)
+  buttonmodul.createInGameButton(buttonIMG, c.buildFarm, true)
 
   normalCursor = love.mouse.getSystemCursor("arrow")
   knotCursor = love.mouse.getSystemCursor("crosshair")
@@ -37,7 +43,7 @@ function love.load(arg)
 
   createPlayers()
   createKnotsAndTripels()
-  ready = true
+  inMenu = true
 end
 
 -- text
@@ -62,7 +68,7 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
-  if ready then
+  if inGame then
     if playermodul.anyPlayersLeft() then
       triplemodul.deleteDeadTriples()
       triplemodul.updateTriplesOptions()
@@ -78,8 +84,10 @@ function love.update(dt)
         nextRound()
       end
     else
-      ready = false --stopp the game
+      inGame = false --stopp the game
     end
+  elseif inMenu then
+
   end
 end
 
@@ -94,14 +102,17 @@ function love.mousepressed(x, y, button, istouch)
 end
 
 function love.draw(dt)
-  if ready then
+  if inGame then
     drawTriples()
     drawRoundsAndPlayerAndFPS()
     drawKnotens()
-    drawButtons()
+    local buttons = buttonmodul.getInGameButtons()
+    drawButtons(buttons)
+  elseif inMenu then
+    local buttons = buttonmodul.getMenuButtons()
+    drawButtons(buttons)
   else --GAME OVER
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.print("GAME OVER\nTHE WINNER IS: "..tostring(playermodul.getActivPlayer().name), love.graphics.getWidth() / 2, love.graphics.getHeight() / 2)
+    drawMessage("GAME OVER\nTHE WINNER IS: "..tostring(playermodul.getActivPlayer().name))
   end
 end
 
@@ -191,8 +202,7 @@ function drawArmy(knot)
   end
 end
 
-function drawButtons()
-  local buttons = buttonmodul.getButtons()
+function drawButtons(buttons)
   love.graphics.setColor(255, 255, 255)
   for i, buttn in pairs(buttons) do
     if not buttn.knotKontext then -- no a kontext Button
@@ -207,6 +217,11 @@ function drawButtons()
   end
 end
 
+function drawMessage(msg)
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.print(msg, love.graphics.getWidth() / 2, love.graphics.getHeight() / 2)
+end
+
 function createKnotInGame(player)
   local nbr = knotenmodul.getNumberOfKnotsByID(player.id) + 1
   knot = knotenmodul.createRandomKnot(nbr, player)
@@ -218,7 +233,12 @@ end
 
 function leftClick(clickedKnot, x,y)
   knotenmodul.uncheckAll()
-  local btn = buttonmodul.getButtonForClick(x, y)
+  local btn = nil
+  if inMenu then
+    btn = buttonmodul.getMenuButtonForClick(x, y)
+  elseif inGame then
+    btn = buttonmodul.getInGameButtonForClick(x, y)
+  end
   if btn ~= nil then --button clicked
     handleButton(btn)
   end
@@ -284,6 +304,14 @@ function updateArmy(knot)
 end
 
 function handleButton(btn)
+  if inGame then
+    handleInGameButton(btn)
+  elseif inMenu then
+    handeMenuButton(btn)
+  end
+end
+
+function handleInGameButton(btn)
   if btn ~= nil then
     if btn.label == c.nextRound then
       nextRound()
@@ -293,12 +321,12 @@ function handleButton(btn)
       playermodul.useAction(1)
     end
     if checkedKnotID ~= nil then
-      handleKontextButtons(btn)
+      handleInGameKontextButtons(btn)
     end
   end
 end
 
-function handleKontextButtons(btn)
+function handleInGameKontextButtons(btn)
   local checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
   if btn.label == c.buildFort then
     if checkedKnot.player.id == playermodul.getActivPlayer().id then
@@ -317,11 +345,26 @@ function handleKontextButtons(btn)
   end
 end
 
+function handeMenuButton(btn)
+  if btn ~= nil then
+    if btn.label == c.pve then
+      print("pve")
+    elseif btn.label == c.pvp then
+      inMenu = false
+      inGame = true
+    end
+  end
+end
+
 function nextRound()
-  local nextPlayer = playermodul.nextPlayer()
-  local nbr = knotenmodul.getActionsOfPlayerID(nextPlayer.id)
-  playermodul.setActions(nbr)
-  roundmodul.incrementRound()
+  if playermodul.anyPlayersLeft() then
+    local nextPlayer = playermodul.nextPlayer()
+    local nbr = knotenmodul.getActionsOfPlayerID(nextPlayer.id)
+    playermodul.setActions(nbr)
+    roundmodul.incrementRound()
+  else
+    inGame = false --GAME OVER
+  end
 end
 
 function fortificateKnot(checkedKnot)

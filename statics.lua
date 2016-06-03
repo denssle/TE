@@ -5,6 +5,8 @@ statics.renameKnot = "Rename knot"
 statics.buildFort = "Fortification"
 statics.buildFarm = "Farmification"
 statics.updateArmy = "Update army"
+statics.pve = "PVE"
+statics.pvp = "PVP"
 --keys
 statics.quit = 'quit'
 statics.backspace = 'backspace'
