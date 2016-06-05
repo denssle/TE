@@ -28,7 +28,6 @@ function love.load(arg)
   -- normal menu buttons
   buttonmodul.createMenuButton(buttonIMG, c.pve, false)
   buttonmodul.createMenuButton(buttonIMG, c.pvp, false)
-
   -- 'normal in game' buttons
   buttonmodul.createInGameButton(buttonIMG, c.nextRound, false) -- img, label, knot kontext
   buttonmodul.createInGameButton(buttonIMG, c.createKnot, false)
