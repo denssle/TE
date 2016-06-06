@@ -22,7 +22,7 @@ function gamemodul.initGame(pm, buttonIMG, kIMG)
   buttonmodul.createInGameButton(buttonIMG, c.updateArmy, true)
   buttonmodul.createInGameButton(buttonIMG, c.buildFort, true)
   buttonmodul.createInGameButton(buttonIMG, c.buildFarm, true)
-  createKnotsAndTripels()
+  gamemodul.createKnotsAndTripels()
   ready = true
 end
 
@@ -37,10 +37,10 @@ function gamemodul.update()
       if knotsOfActivPlayer <= 0 then
         print("No knots left; deletePlayer", playermodul.getActivPlayer().name)
         playermodul.deletePlayer(playermodul.getActivPlayer().id)
-        nextRound()
+        gamemodul.nextRound()
       end
       if not playermodul.enoughtActionsLeft(0) then
-        nextRound()
+        gamemodul.nextRound()
       end
     end
   end
@@ -48,7 +48,7 @@ end
 
 function gamemodul.draw()
   if ready then
-    drawRoundsAndPlayerAndFPS()
+    gamemodul.drawRoundsAndPlayerAndFPS()
     triplemodul.drawTriples()
     knotenmodul.drawKnotens(knotIMG)
     local buttons = buttonmodul.getInGameButtons()
@@ -56,7 +56,7 @@ function gamemodul.draw()
   end
 end
 
-local createKnotsAndTripels = function ()
+function gamemodul.createKnotsAndTripels ()
   for i, player in pairs(playermodul.getPlayers()) do
     knotenmodul.createKnotens( 2 , player )
   end
@@ -66,7 +66,7 @@ local createKnotsAndTripels = function ()
 end
 
 
-local createKnotInGame = function (player)
+function gamemodul.createKnotInGame (player)
   local nbr = knotenmodul.getNumberOfKnotsByID(player.id) + 1
   knot = knotenmodul.createRandomKnot(nbr, player)
   newKnot = {}
@@ -79,28 +79,28 @@ function gamemodul.leftClick(x, y)
   knotenmodul.uncheckAll()
   local btn = buttonmodul.getInGameButtonForClick(x, y)
   if btn ~= nil then --button clicked
-    handleInGameButton(btn)
+    gamemodul.handleInGameButton(btn)
   else
     local clickedKnot = knotenmodul.getKnotForClick(x, y)
     if checkedKnotID ~= nil then --We have a checked Knot
-      leftClickCheckedKnot(clickedKnot)
+      gamemodul.leftClickCheckedKnot(clickedKnot)
     else -- No checked Knot
-      leftClickNoCheckedKnot(clickedKnot, x,y)
+      gamemodul.leftClickNoCheckedKnot(clickedKnot, x,y)
     end
   end
 end
 
-local leftClickCheckedKnot = function (clickedKnot)
+function gamemodul.leftClickCheckedKnot (clickedKnot)
   checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
   if checkedKnot ~= nil and checkedKnot.army ~= nil then
     if checkedKnot.player.id == playermodul.getActivPlayer().id then
-      moveCheckedArmy(checkedKnot, clickedKnot)
+      gamemodul.moveCheckedArmy(checkedKnot, clickedKnot)
     end
   end
   checkedKnotID = nil
 end
 
-local leftClickNoCheckedKnot = function (clickedKnot, x,y)
+function gamemodul.leftClickNoCheckedKnot (clickedKnot, x,y)
   if clickedKnot ~= nil then --We clicked a knot
     clickedKnot.check = true --we check the knot
     checkedKnotID = knot.id
@@ -108,7 +108,7 @@ local leftClickNoCheckedKnot = function (clickedKnot, x,y)
 end
 
 
-local moveCheckedArmy = function (checkedKnot, clickedKnot)
+function gamemodul.moveCheckedArmy  (checkedKnot, clickedKnot)
   if checkedKnot ~= nil and clickedKnot ~= nil then
     local triple = triplemodul.getTriple(checkedKnot, clickedKnot)
     if triple ~= nil and clickedKnot.id ~= checkedKnot.id then
@@ -120,7 +120,7 @@ local moveCheckedArmy = function (checkedKnot, clickedKnot)
   end
 end
 
-local createArmy = function (knot)
+function gamemodul.createArmy  (knot)
   if knot.player.actions >= 2 then
     playermodul.useAction(2)
     local newArmy = armymodul.createArmy(knot)
@@ -128,48 +128,48 @@ local createArmy = function (knot)
   end
 end
 
-local updateArmy = function (knot)
+function gamemodul.updateArmy (knot)
   if knot.player.actions >= 2 then
     playermodul.useAction(2)
     knot.army.strength = knot.army.strength + 1
   end
 end
 
-local handleInGameButton = function (btn)
+function gamemodul.handleInGameButton  (btn)
   if btn ~= nil then
     if btn.label == c.nextRound then
-      nextRound()
+      gamemodul.nextRound()
     end
     if btn.label == c.createKnot then
-      createKnotInGame(playermodul.getActivPlayer())
+      gamemodul.createKnotInGame(playermodul.getActivPlayer())
       playermodul.useAction(1)
     end
     if checkedKnotID ~= nil then
-      handleInGameKontextButtons(btn)
+      gamemodul.handleInGameKontextButtons(btn)
     end
   end
 end
 
-local handleInGameKontextButtons = function (btn)
+function gamemodul.handleInGameKontextButtons (btn)
   local checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
   if btn.label == c.buildFort then
     if checkedKnot.player.id == playermodul.getActivPlayer().id then
-      fortificateKnot(checkedKnot)
+      gamemodul.fortificateKnot(checkedKnot)
     end
   end
   if btn.label == c.updateArmy then
     if checkedKnot.army ~= nil then
-      updateArmy(checkedKnot)
+      gamemodul.updateArmy(checkedKnot)
     else
-      createArmy(checkedKnot)
+      gamemodul.createArmy(checkedKnot)
     end
   end
   if btn.label == c.buildFarm then
-    farmificateKnot(checkedKnot)
+    gamemodul.farmificateKnot(checkedKnot)
   end
 end
 
-local nextRound = function ()
+function gamemodul.nextRound ()
   if playermodul.anyPlayersLeft() then
     local nextPlayer = playermodul.nextPlayer()
     local nbr = knotenmodul.getActionsOfPlayerID(nextPlayer.id)
@@ -178,21 +178,21 @@ local nextRound = function ()
   end
 end
 
-local fortificateKnot = function (checkedKnot)
+function gamemodul.fortificateKnot (checkedKnot)
   if checkedKnot.farm <= 0 then
     checkedKnot.fortification = checkedKnot.fortification + 1
     playermodul.useAction(1)
   end
 end
 
-local farmificateKnot = function (checkedKnot)
+function gamemodul.farmificateKnot (checkedKnot)
   if checkedKnot.fortification <= 0 then
     checkedKnot.farm = checkedKnot.farm + 1
     playermodul.useAction(1)
   end
 end
 
-local drawRoundsAndPlayerAndFPS = function ()
+function gamemodul.drawRoundsAndPlayerAndFPS  ()
   love.graphics.setColor(255, 255, 255)
   love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), 10, 10)
   love.graphics.print("Round: "..tostring(roundmodul.getRound()), 10, 20)
@@ -204,7 +204,7 @@ local drawRoundsAndPlayerAndFPS = function ()
   love.graphics.print("Actions: "..tostring(player.actions).." / "..knotenmodul.getActionsOfPlayerID(player.id) , 10, 40)
 end
 
-local drawMessage = function (msg)
+function gamemodul.drawMessage (msg)
   love.graphics.setColor(255, 255, 255)
   love.graphics.print(msg, love.graphics.getWidth() / 2, love.graphics.getHeight() / 2)
 end

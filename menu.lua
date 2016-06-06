@@ -12,7 +12,7 @@ function menumodul.initMenu(buttonIMG)
   buttonmodul.createMenuButton(buttonIMG, c.pvp, false)
   -- normal menu buttons
   buttonmodul.createMenuButton(buttonIMG, c.continue, true)
-  createPlayers()
+  menumodul.createPlayers()
 end
 
 function menumodul.update()
@@ -27,11 +27,11 @@ end
 function menumodul.leftClick(x, y)
   btn = buttonmodul.getMenuButtonForClick(x, y)
   if btn ~= nil then --button clicked
-    handeMenuButton(btn)
+    menumodul.handeMenuButton(btn)
   end
 end
 
-function handeMenuButton(btn)
+function menumodul.handeMenuButton(btn)
   if btn ~= nil then
     if btn.label == c.pve then
       print("handle", c.pve)
@@ -39,16 +39,16 @@ function handeMenuButton(btn)
       checkedKnotID = btn.label
     elseif btn.label == c.continue and checkedKnotID == c.pvp then
       print("handle", c.continue)
-      startGame()
+      menumodul.startGame()
     end
   end
 end
 
-function startGame()
+function menumodul.startGame()
   inGame = true
 end
 
-function createPlayers()
+function menumodul.createPlayers()
   red = playermodul.createPlayer("RED", 255, 0, 0)
   blue = playermodul.createPlayer("BLUE", 0, 0, 255)
 end
