@@ -6,12 +6,15 @@ local menumodul = {}
 checkedKnotID = nil
 local inGame = false
 
-function menumodul.initMenu(buttonIMG)
+function menumodul.initMenu(buttonIMG, colors)
   -- normal menu buttons
   buttonmodul.createMenuButton(buttonIMG, c.pve, false)
   buttonmodul.createMenuButton(buttonIMG, c.pvp, false)
   -- normal menu buttons
   buttonmodul.createMenuButton(buttonIMG, c.continue, true)
+  for i, color in pairs(colors) do
+    buttonmodul.createColorButton(color, i)
+  end
   menumodul.createPlayers()
 end
 

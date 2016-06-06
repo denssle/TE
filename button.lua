@@ -3,6 +3,8 @@ local inGameButtons = {}
 local menuButtons = {}
 local inGameBX = 20
 local menuY = 100
+local colorY = 100
+
 
 function buttonmodul.createInGameButton(img, label, kontext)
   local X = inGameBX + 20 -- abstand zwischen den buttons
@@ -22,7 +24,7 @@ end
 function buttonmodul.createMenuButton(img, label, kontext)
   local y = menuY + 30
   local button = {}
-  button.x = love.graphics.getHeight() / 2.5
+  button.x = math.ceil (love.graphics.getHeight() / 2.5)
   button.y = y
   button.img = img
   button.height = img:getHeight()
@@ -33,6 +35,21 @@ function buttonmodul.createMenuButton(img, label, kontext)
 
   menuButtons[button.id] = button
   menuY = y + img:getHeight()
+end
+
+function buttonmodul.createColorButton(cimg, label)
+  local cy = colorY + 30
+  local button = {}
+  button.x = math.ceil (love.graphics.getHeight() / 3.1) -- makes it an int
+  button.y = cy
+  button.img = cimg
+  button.height = cimg:getHeight()
+  button.width = cimg:getWidth()
+  button.kontext = true
+  button.label = ""
+  button.id = love.math.random(11, 1293029) * love.math.random(122, 777777)..label
+  menuButtons[button.id] = button
+  colorY = cy + cimg:getHeight()
 end
 
 function buttonmodul.getInGameButtons()
@@ -58,10 +75,11 @@ function buttonmodul.getButtonForClick(list, x, y)
       local xhigh = x
       local ylow = y - buttn.height
       local yhigh = y
+      --print("x",x,"y",y, "\tx",xlow, xhigh,"\ty", ylow, yhigh)
       for xi = xlow, xhigh, 1 do
         for yi = ylow, yhigh, 1 do
           if buttn.x == xi and buttn.y == yi then
-            print("pressed button", buttn.id)
+            print("getButtonForClick", buttn.id)
             return buttn
           end
         end

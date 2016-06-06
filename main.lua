@@ -16,13 +16,17 @@ function love.load(arg)
   love.graphics.setBackgroundColor( 100 , 100 , 100 )
   knotIMG = love.graphics.newImage( '/assets/ball.png' )
   buttonIMG = love.graphics.newImage( '/assets/buttonEmpty.png' )
-
+  colors = {}
+  colors.red = love.graphics.newImage( '/assets/red.png' )
+  colors.green = love.graphics.newImage( '/assets/green.png' )
+  colors.blue = love.graphics.newImage( '/assets/blue.png' )
+  
   --normalCursor = love.mouse.getSystemCursor("arrow")
   --knotCursor = love.mouse.getSystemCursor("crosshair")
   --love.mouse.setCursor(normalCursor)
 
   inMenu = true
-  menumodul.initMenu(buttonIMG)
+  menumodul.initMenu(buttonIMG, colors)
 end
 
 function love.update(dt)
