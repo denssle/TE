@@ -7,6 +7,7 @@ statics.buildFarm = "Farmification"
 statics.updateArmy = "Update army"
 statics.pve = "PVE"
 statics.pvp = "PVP"
+statics.continue = "Continue"
 --keys
 statics.quit = 'quit'
 statics.backspace = 'backspace'

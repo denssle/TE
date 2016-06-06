@@ -4,7 +4,7 @@ local menuButtons = {}
 local inGameBX = 20
 local menuY = 100
 
-function buttonmodul.createInGameButton(img, label, knotKontext)
+function buttonmodul.createInGameButton(img, label, kontext)
   local X = inGameBX + 20 -- abstand zwischen den buttons
   local button = {}
   button.x = inGameBX
@@ -14,7 +14,7 @@ function buttonmodul.createInGameButton(img, label, knotKontext)
   button.width = img:getWidth()
   button.label = label
   button.id = love.math.random(2, 53562) * love.math.random(12, 8899771)..label
-  button.knotKontext = knotKontext
+  button.kontext = kontext
   inGameButtons[button.id] = button
   inGameBX = X + img:getWidth()
 end
@@ -69,6 +69,21 @@ function buttonmodul.getButtonForClick(list, x, y)
     end
   end
   return nil
+end
+
+function buttonmodul.drawButtons(buttons, checkedKnotID)
+  love.graphics.setColor(255, 255, 255)
+  for i, buttn in pairs(buttons) do
+    if not buttn.kontext then -- no a kontext Button
+      love.graphics.draw(buttn.img, buttn.x, buttn.y)
+      love.graphics.print(buttn.label, buttn.x + (buttn.width / 10), buttn.y+ (buttn.height / 3))
+    else -- a kontext Button
+      if checkedKnotID ~= nil then --We have a checked Knot, draw kontext menu
+        love.graphics.draw(buttn.img, buttn.x, buttn.y)
+        love.graphics.print(buttn.label, buttn.x + (buttn.width / 10), buttn.y+ (buttn.height / 3))
+      end
+    end
+  end
 end
 
 return buttonmodul

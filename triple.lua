@@ -142,5 +142,29 @@ function triplemodul.getTriple(knot1, knot2)
   return nil
 end
 
+function triplemodul.drawTriples()
+  love.graphics.setLineWidth( 1 )
+  for i, trip in ipairs(tripels) do
+    if not trip.killMe then
+      if trip.option.short then
+        love.graphics.setColor(255, 0, 0)
+        if trip.option.check then
+          love.graphics.setLineWidth( 2 )
+        end
+        love.graphics.line(trip.knotA.x, trip.knotA.y, trip.knotB.x, trip.knotB.y)
+      elseif trip.option.medium then
+        love.graphics.setColor(255, 255, 255)
+        if trip.option.check then
+          love.graphics.setLineWidth( 1 )
+        end
+        love.graphics.line(trip.knotA.x, trip.knotA.y, trip.knotB.x, trip.knotB.y)
+      elseif trip.option.long and trip.option.check then
+        love.graphics.setColor(20, 20, 255)
+        love.graphics.setLineWidth( 1 )
+        love.graphics.line(trip.knotA.x, trip.knotA.y, trip.knotB.x, trip.knotB.y)
+      end
+    end
+  end
+end
 
 return triplemodul

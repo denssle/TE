@@ -1,6 +1,6 @@
 local knotenmodul = {}
 local knotens = {}
-local img = nil
+local knotRadius = 15
 
 function knotenmodul.getKnotens()
   return knotens
@@ -56,10 +56,10 @@ function knotenmodul.getKnotByID(id)
   return nil
 end
 
-function knotenmodul.getKnotForClick(x, y, param)
-  xlow = x - param
+function knotenmodul.getKnotForClick(x, y)
+  xlow = x - knotRadius
   xhigh = x + 5
-  ylow = y - param
+  ylow = y - knotRadius
   yhigh = y + 5
 
   for xi = xlow, xhigh, 1 do
@@ -131,6 +131,37 @@ function knotenmodul.getNumberOfKnotsByID(playerID)
     end
   end
   return nbr
+end
+
+function knotenmodul.drawKnotens(knotIMG)
+  local knotens = knotenmodul.getKnotens()
+  for i, knot in ipairs(knotens) do
+    if not knot.killMe then
+      if knot.check then
+        love.graphics.setColor(255, 0, 0)
+      else
+        love.graphics.setColor(knot.player.color.red, knot.player.color.green, knot.player.color.blue)
+      end
+      love.graphics.draw(knotIMG, knot.x, knot.y)
+      love.graphics.print(knot.name, knot.x, knot.y+knotRadius+5)
+      drawArmy(knot)
+    end
+  end
+end
+
+function drawArmy(knot)
+  if knot.army ~= nil then
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.print(knot.army.strength, knot.x+knotRadius * 2, knot.y)
+  end
+  if knot.fortification > 0 then
+    love.graphics.setLineWidth( knot.fortification * 2)
+    love.graphics.circle( "line", knot.x, knot.y, 20, 25 )
+    love.graphics.print("+"..knot.fortification, knot.x+knotRadius * 2, knot.y + 10)
+  end
+  if knot.farm > 0 then
+    love.graphics.print("+"..knot.farm, knot.x+knotRadius * 2, knot.y + 10)
+  end
 end
 
 return knotenmodul

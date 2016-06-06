@@ -5,7 +5,7 @@ local index = 0
 
 function playermodul.createPlayer(name, red, green, blue)
   index = index + 1
-
+  print("create player", name)
   local player = {}
   player.name = name
   player.actions = 0
