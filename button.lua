@@ -1,10 +1,11 @@
 local buttonmodul = {}
 local inGameButtons = {}
 local menuButtons = {}
+local popupButtons = {}
 local inGameBX = 20
 local menuY = 100
 local colorY = 100
-
+local popX = 10
 
 function buttonmodul.createInGameButton(img, label, kontext)
   local X = inGameBX + 20 -- abstand zwischen den buttons
@@ -17,9 +18,23 @@ function buttonmodul.createInGameButton(img, label, kontext)
   button.label = label
   button.id = love.math.random(2, 53562) * love.math.random(12, 8899771)..label
   button.kontext = kontext
-  button.checked = false
   inGameButtons[button.id] = button
   inGameBX = X + img:getWidth()
+end
+
+function buttonmodul.createPopUpButtons(img, label)
+  local x = popX
+  local button = {}
+  button.x = x
+  button.y = 10
+  button.img = img
+  button.height = img:getHeight()
+  button.width = img:getWidth()
+  button.label = label
+  button.id = love.math.random(12, 738422) * love.math.random(9, 1111773)..label
+  button.kontext = false
+  popupButtons[button.id] = button
+  popX = math.ceil( x + img:getWidth() * 3)
 end
 
 function buttonmodul.createMenuButton(img, label, kontext)
@@ -33,7 +48,6 @@ function buttonmodul.createMenuButton(img, label, kontext)
   button.label = label
   button.kontext = kontext
   button.id = love.math.random(2, 120000) * love.math.random(12, 8899771)..label
-  button.checked = false
   menuButtons[button.id] = button
   menuY = y + img:getHeight()
 end
@@ -64,6 +78,10 @@ end
 
 function buttonmodul.getMenuButtons()
   return menuButtons
+end
+
+function buttonmodul.getPopUpButtons()
+  return popupButtons
 end
 
 function buttonmodul.getMenuButtonForClick(x, y)
@@ -103,11 +121,12 @@ function buttonmodul.drawButtons(buttons, isKontext)
       love.graphics.print(buttn.label, buttn.x + (buttn.width / 10), buttn.y+ (buttn.height / 3))
     else -- a kontext Button
       if isKontext ~= nil then --We have a checked Knot, draw kontext menu
-        love.graphics.draw(buttn.img, buttn.x, buttn.y)
         if not buttn.checked then -- Normal Kontext Button, print label
+          love.graphics.draw(buttn.img, buttn.x, buttn.y)
           love.graphics.print(buttn.label, buttn.x + (buttn.width / 10), buttn.y+ (buttn.height / 3))
         else -- Clicked Color Button, no label but change color
           love.graphics.setColor(128, 128, 128)
+          love.graphics.draw(buttn.img, buttn.x, buttn.y)
         end
       end
     end

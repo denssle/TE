@@ -9,6 +9,7 @@ statics.pve = "PVE"
 statics.pvp = "PVP"
 statics.continue = "Continue"
 statics.createPlayer = "Create Player"
+statics.info = "Info"
 --keys
 statics.quit = 'quit'
 statics.backspace = 'backspace'
