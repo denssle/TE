@@ -49,6 +49,7 @@ end
 function gamemodul.draw()
   if ready then
     gamemodul.drawRoundsAndPlayerAndFPS()
+    gamemodul.drawClickedKnotStats()
     triplemodul.drawTriples()
     knotenmodul.drawKnotens(knotIMG)
     local buttons = buttonmodul.getInGameButtons()
@@ -202,6 +203,24 @@ function gamemodul.drawRoundsAndPlayerAndFPS  ()
   love.graphics.print("Player: "..tostring(player.name), 10, 30, 0, 1, 1)
   love.graphics.setColor(255, 255, 255)
   love.graphics.print("Actions: "..tostring(player.actions).." / "..knotenmodul.getActionsOfPlayerID(player.id) , 10, 40)
+end
+
+function gamemodul.drawClickedKnotStats()
+  if checkedKnotID ~= nil then --We have a checked Knot
+    local checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
+    local player = checkedKnot.player
+    local y = 650
+    local x = 40
+    love.graphics.setColor(player.color.red, player.color.green, player.color.blue)
+    love.graphics.print("Knot: "..tostring(checkedKnot.name), x, y) -- text, x, y
+    if checkedKnot.army ~= nil then
+      love.graphics.print("Army: "..tostring(checkedKnot.army.strength), x + 100, y)
+    else
+      love.graphics.print("Army: "..0, x + 100, y)
+    end
+    love.graphics.print("Fort: "..tostring(checkedKnot.fortification), x + 200, y)
+    love.graphics.print("Farm: "..tostring(checkedKnot.farm), x + 300, y)
+  end
 end
 
 function gamemodul.drawMessage (msg)

@@ -29,6 +29,19 @@ end
 function menumodul.draw()
   local buttons = buttonmodul.getMenuButtons()
   buttonmodul.drawButtons(buttons, isKontext)
+  menumodul.drawPlayers()
+end
+
+function menumodul.drawPlayers()
+  local players = playermodul.getPlayers()
+  y = 100
+  x = math.ceil (love.graphics.getHeight() / 1.5)
+  for i, player in pairs(players) do
+    local yi = y + 30
+    love.graphics.setColor(player.color.red, player.color.green, player.color.blue)
+    love.graphics.print(i.." "..player.name, x, yi)
+    y = yi + 30
+  end
 end
 
 function menumodul.leftClick(x, y)
@@ -83,7 +96,7 @@ end
 function menumodul.createPlayer()
   if checkedColorButton ~= nil then
     local btn = checkedColorButton
-    local newPlayer = playermodul.createPlayer(btn.label, btn.red, btn.green, btn.blue)
+    local newPlayer = playermodul.createPlayer(btn.name, btn.red, btn.green, btn.blue)
     checkedColorButton.checked = false
   end
 end
