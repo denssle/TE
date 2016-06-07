@@ -16,15 +16,11 @@ function love.load(arg)
   love.graphics.setBackgroundColor( 100 , 100 , 100 )
   knotIMG = love.graphics.newImage( '/assets/ball.png' )
   buttonIMG = love.graphics.newImage( '/assets/buttonEmpty.png' )
-  colors = {}
-  colors.red = love.graphics.newImage( '/assets/red.png' )
-  colors.green = love.graphics.newImage( '/assets/green.png' )
-  colors.blue = love.graphics.newImage( '/assets/blue.png' )
-  
+
   --normalCursor = love.mouse.getSystemCursor("arrow")
   --knotCursor = love.mouse.getSystemCursor("crosshair")
   --love.mouse.setCursor(normalCursor)
-
+  colors = createColors()
   inMenu = true
   menumodul.initMenu(buttonIMG, colors)
 end
@@ -94,4 +90,30 @@ function rightClick(x, y)
   elseif inMenu then
     menumodul.rightClick(x, y)
   end
+end
+
+function createColors()
+  colors = {}
+  red = {}
+  red.img = love.graphics.newImage( '/assets/red.png' )
+  red.red = 255
+  red.green = 0
+  red.blue = 0
+  colors.red = red
+
+  green = {}
+  green.img = love.graphics.newImage( '/assets/green.png' )
+  green.red = 0
+  green.green = 255
+  green.blue = 0
+  colors.green = green
+
+  blue = {}
+  blue.img = love.graphics.newImage( '/assets/blue.png' )
+  blue.red = 0
+  blue.green = 0
+  blue.blue = 255
+  colors.blue = blue
+
+  return colors
 end
