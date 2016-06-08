@@ -51,6 +51,9 @@ function menumodul.leftClick(x, y)
   end
 end
 
+function menumodul.rightClick(x, y)
+end
+
 function menumodul.handeMenuButton(btn)
   if btn ~= nil then
     if btn.label == c.pve then

@@ -92,11 +92,16 @@ function gamemodul.leftClick(x, y)
   if btn ~= nil then --button clicked
     gamemodul.handleInGameButton(btn)
   else
-    local clickedKnot = knotenmodul.getKnotForClick(x, y)
-    if checkedKnotID ~= nil then --We have a checked Knot
-      gamemodul.leftClickCheckedKnot(clickedKnot)
-    else -- No checked Knot
-      gamemodul.leftClickNoCheckedKnot(clickedKnot, x,y)
+    if not popupActiv then
+      local clickedKnot = knotenmodul.getKnotForClick(x, y)
+      if checkedKnotID ~= nil then --We have a checked Knot
+        gamemodul.leftClickCheckedKnot(clickedKnot)
+      else -- No checked Knot
+        gamemodul.leftClickNoCheckedKnot(clickedKnot, x,y)
+      end
+    else -- open PopUp
+      popupActiv = false
+      checkedKnotID = nil
     end
   end
 end
@@ -105,11 +110,11 @@ function gamemodul.leftClickCheckedKnot (clickedKnot)
   local checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
   if checkedKnot ~= nil and checkedKnot.army ~= nil then
     if checkedKnot.player.id == playermodul.getActivPlayer().id then
+      print(checkedKnot.player.id, " VS ", playermodul.getActivPlayer().id)
       gamemodul.moveCheckedArmy(checkedKnot, clickedKnot)
     end
   end
   checkedKnotID = nil
-  popupActiv = false
 end
 
 function gamemodul.leftClickNoCheckedKnot (clickedKnot, x,y)
@@ -160,27 +165,29 @@ function gamemodul.handleInGameButton  (btn)
       gamemodul.handleInGameKontextButtons(btn)
     end
   end
+  checkedKnotID = nil
 end
 
 function gamemodul.handleInGameKontextButtons (btn)
   local checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
-  if btn.label == c.buildFort then
-    if checkedKnot.player.id == playermodul.getActivPlayer().id then
+  if checkedKnot.player.id == playermodul.getActivPlayer().id then
+    print(checkedKnot.player.id, " VS ", playermodul.getActivPlayer().id)
+    if btn.label == c.buildFort then
       gamemodul.fortificateKnot(checkedKnot)
     end
-  end
-  if btn.label == c.updateArmy then
-    if checkedKnot.army ~= nil then
-      gamemodul.updateArmy(checkedKnot)
-    else
-      gamemodul.createArmy(checkedKnot)
+    if btn.label == c.updateArmy then
+      if checkedKnot.army ~= nil then
+        gamemodul.updateArmy(checkedKnot)
+      else
+        gamemodul.createArmy(checkedKnot)
+      end
     end
-  end
-  if btn.label == c.buildFarm then
-    gamemodul.farmificateKnot(checkedKnot)
-  end
-  if btn.label == c.info then
-    popupActiv = true
+    if btn.label == c.buildFarm then
+      gamemodul.farmificateKnot(checkedKnot)
+    end
+    if btn.label == c.info then
+      popupActiv = true
+    end
   end
 end
 
@@ -224,6 +231,10 @@ end
 function gamemodul.drawMessage (msg)
   love.graphics.setColor(255, 255, 255)
   love.graphics.print(msg, love.graphics.getWidth() / 2, love.graphics.getHeight() / 2)
+end
+
+function gamemodul.rightClick(x, y)
+
 end
 
 return gamemodul
