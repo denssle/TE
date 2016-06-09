@@ -73,6 +73,8 @@ function gamemodul.draw()
       knotenmodul.drawKnotens(knotIMG)
     end
     buttonmodul.drawButtons(buttons, checkedKnotID)
+  else
+    print("GAME IS OVER!")
   end
 end
 
@@ -248,11 +250,6 @@ function gamemodul.drawRoundsAndPlayerAndFPS  ()
   love.graphics.print("Player: "..tostring(player.name), 10, 30, 0, 1, 1)
   love.graphics.setColor(255, 255, 255)
   love.graphics.print("Actions: "..tostring(player.actions).." / "..knotenmodul.getActionsOfPlayerID(player.id) , 10, 40)
-end
-
-function gamemodul.drawMessage (msg)
-  love.graphics.setColor(255, 255, 255)
-  love.graphics.print(msg, love.graphics.getWidth() / 2, love.graphics.getHeight() / 2)
 end
 
 function gamemodul.rightClick(x, y)
