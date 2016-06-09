@@ -8,7 +8,7 @@ end
 
 function knotenmodul.createKnotens(nbr, owner)
   for i = 1, nbr do
-    knot = knotenmodul.createRandomKnot(i, owner)
+    local knot = knotenmodul.createRandomKnot(i, owner)
   end
 end
 
@@ -57,10 +57,10 @@ function knotenmodul.getKnotByID(id)
 end
 
 function knotenmodul.getKnotForClick(x, y)
-  xlow = x - knotRadius
-  xhigh = x + 5
-  ylow = y - knotRadius
-  yhigh = y + 5
+  local xlow = x - knotRadius
+  local xhigh = x + 5
+  local ylow = y - knotRadius
+  local yhigh = y + 5
 
   for xi = xlow, xhigh, 1 do
     for yi = ylow, yhigh, 1 do
@@ -75,8 +75,8 @@ end
 
 function knotenmodul.moveAllKnotsALittle()
   for i, knot in ipairs(knotens) do
-    coin = math.random(2) == 2 and 1 or -1
-    nbr = 5 * coin
+    local coin = math.random(2) == 2 and 1 or -1
+    local nbr = 5 * coin
     knot.x = knot.x + nbr
     knot.y = knot.y + nbr
   end

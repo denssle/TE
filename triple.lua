@@ -21,7 +21,7 @@ function triplemodul.createTripels(knotens)
 end
 
 function triplemodul.createTripel(knot, knot2)
-  options = triplemodul.createOptions(knot, knot2)
+  local options = triplemodul.createOptions(knot, knot2)
   print(knot.name, " - ", knot2.name, "distance", options.distance, "short: ", options.short, "medium", options.medium, "long", options.long, "expense", options.expense)
   local trip = {}
   trip.knotA = knot
@@ -58,12 +58,12 @@ end
 function triplemodul.createOptions(knotA, knotB)
   local dis = triplemodul.getDistance(knotA, knotB)
 
-  knotCheck = false
+  local knotCheck = false
   if knotA.check or knotB.check then
     knotCheck = true
   end
 
-  op = {}
+  local op = {}
   op.long = false
   op.short = false
   op.medium = triplemodul.isMedium(knotA, knotB)
@@ -88,9 +88,9 @@ function triplemodul.createOptions(knotA, knotB)
 end
 
 function triplemodul.getRandomTriple()
-  max = table.getn(tripels) + 1
-  nbr = love.math.random(0, max)
-  trip = tripels[nbr]
+  local max = table.getn(tripels) + 1
+  local nbr = love.math.random(0, max)
+  local trip = tripels[nbr]
   if trip == nil then
     trip = getRandomTriple()
   end

@@ -13,10 +13,9 @@ local colorY = 100
 local kInfoX = 10
 local adminX = 10
 
-function buttonmodul.init(bIMG)
+function buttonmodul.init(bIMG, p, m, s)
   buttonIMG = bIMG
-
-  slidermodul.init(plusIMG, minusIMG, sliderPoint)
+  slidermodul.init(p, m, s)
 end
 
 function buttonmodul.createInGameButton(label, kontext)

@@ -18,17 +18,17 @@ function love.load(arg)
   knotIMG = love.graphics.newImage( '/assets/ball.png' )
   buttonIMG = love.graphics.newImage( '/assets/buttonEmpty.png' )
 
-  minusIMG = love.graphics.newImage( '/assets/minus.png' )
-  plusIMG = love.graphics.newImage( '/assets/plus.png' )
-  sliderPoint = love.graphics.newImage( '/assets/null.png' )
+  local minusIMG = love.graphics.newImage( '/assets/minus.png' )
+  local plusIMG = love.graphics.newImage( '/assets/plus.png' )
+  local sliderPoint = love.graphics.newImage( '/assets/null.png' )
 
 
   --normalCursor = love.mouse.getSystemCursor("arrow")
   --knotCursor = love.mouse.getSystemCursor("crosshair")
   --love.mouse.setCursor(normalCursor)
-  buttonmodul.init(buttonIMG)
+  buttonmodul.init(buttonIMG, plusIMG, minusIMG, sliderPoint)
   inMenu = true
-  colors = createColors()
+  local colors = createColors()
   menumodul.initMenu(colors)
 end
 
@@ -101,22 +101,22 @@ function rightClick(x, y)
 end
 
 function createColors()
-  colors = {}
-  red = {}
+  local colors = {}
+  local red = {}
   red.img = love.graphics.newImage( '/assets/red.png' )
   red.red = 255
   red.green = 0
   red.blue = 0
   colors.red = red
 
-  green = {}
+  local green = {}
   green.img = love.graphics.newImage( '/assets/green.png' )
   green.red = 0
   green.green = 255
   green.blue = 0
   colors.green = green
 
-  blue = {}
+  local blue = {}
   blue.img = love.graphics.newImage( '/assets/blue.png' )
   blue.red = 0
   blue.green = 0

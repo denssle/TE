@@ -91,8 +91,8 @@ end
 
 function gamemodul.createKnotInGame (player)
   local nbr = knotenmodul.getNumberOfKnotsByID(player.id) + 1
-  knot = knotenmodul.createRandomKnot(nbr, player)
-  newKnot = {}
+  local knot = knotenmodul.createRandomKnot(nbr, player)
+  local newKnot = {}
   table.insert(newKnot, knot)
   cacheKnotens = knotenmodul.getKnotens()
   triplemodul.createTripels(cacheKnotens, newKnot)
@@ -100,7 +100,7 @@ end
 
 function gamemodul.leftClick(x, y)
   knotenmodul.uncheckAll()
-  btn = gamemodul.getButton(x, y)
+  local btn = gamemodul.getButton(x, y)
   if btn ~= nil then --button clicked
     gamemodul.handleInGameButton(btn)
   else

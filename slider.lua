@@ -1,4 +1,5 @@
 slidermodul = {}
+
 local plusIMG = nil
 local minusIMG = nil
 local middelX = nil

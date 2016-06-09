@@ -62,10 +62,10 @@ end
 function armymodul.fight(destination, knot)
   print("fight")
   -- die angreifer können überlegen, gleichstark oder unterlegen sein
-  fort = destination.fortification
-  defArmy = destination.army
-  attacArmy = knot.army
-  defSum = destination.fortification + defArmy.strength
+  local fort = destination.fortification
+  local defArmy = destination.army
+  local attacArmy = knot.army
+  local defSum = destination.fortification + defArmy.strength
   if defSum  < attacArmy.strength then
     print("angreifer erobert destination")
     defArmy.strength = attacArmy.strength - defArmy.strength

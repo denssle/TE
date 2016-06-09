@@ -34,8 +34,8 @@ end
 
 function menumodul.drawPlayers()
   local players = playermodul.getPlayers()
-  y = 100
-  x = math.ceil (love.graphics.getHeight() / 1.5)
+  local y = 100
+  local x = math.ceil (love.graphics.getHeight() / 1.5)
   for i, player in pairs(players) do
     local yi = y + 30
     love.graphics.setColor(player.color.red, player.color.green, player.color.blue)
@@ -45,7 +45,7 @@ function menumodul.drawPlayers()
 end
 
 function menumodul.leftClick(x, y)
-  btn = buttonmodul.getMenuButtonForClick(x, y)
+  local btn = buttonmodul.getMenuButtonForClick(x, y)
   if btn ~= nil then --button clicked
     menumodul.handeMenuButton(btn)
   end
