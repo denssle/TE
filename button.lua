@@ -1,3 +1,6 @@
+local slidermodul = require "slider"
+
+local buttonIMG = nil
 local buttonmodul = {}
 local inGameButtons = {}
 local menuButtons = {}
@@ -10,42 +13,48 @@ local colorY = 100
 local kInfoX = 10
 local adminX = 10
 
-function buttonmodul.createInGameButton(img, label, kontext)
+function buttonmodul.init(bIMG)
+  buttonIMG = bIMG
+
+  slidermodul.init(plusIMG, minusIMG, sliderPoint)
+end
+
+function buttonmodul.createInGameButton(label, kontext)
   local X = inGameBX + 20 -- abstand zwischen den buttons
-  local button = buttonmodul.createButton(inGameBX, 700, img, label, kontext)
+  local button = buttonmodul.createButton(inGameBX, 700, label, kontext)
   inGameButtons[button.id] = button
-  inGameBX = X + img:getWidth()
+  inGameBX = X + buttonIMG:getWidth()
 end
 
-function buttonmodul.createKnotInfoButton(img, label)
+function buttonmodul.createKnotInfoButton(label)
   local x = kInfoX
-  local button = buttonmodul.createButton(x, 10, img, label, false)
+  local button = buttonmodul.createButton(x, 10, label, false)
   knotInfoButtons[button.id] = button
-  kInfoX = math.ceil( x + img:getWidth() * 3)
+  kInfoX = math.ceil( x + buttonIMG:getWidth() * 3)
 end
 
-function buttonmodul.createAdministrationButton(img, label)
+function buttonmodul.createAdministrationButton(label)
   local x = adminX
-  local button = buttonmodul.createButton(x, 10, img, label, false)
+  local button = buttonmodul.createButton(x, 10, label, false)
   administrationButtons[button.id] = button
-  adminX = math.ceil( x + img:getWidth() * 3)
+  adminX = math.ceil( x + buttonIMG:getWidth() * 3)
 end
 
-function buttonmodul.createMenuButton(img, label, kontext)
+function buttonmodul.createMenuButton(label, kontext)
   local y = menuY + 30
   local xi = math.ceil (love.graphics.getHeight() / 2.5)
-  local button = buttonmodul.createButton(xi, y, img, label, kontext)
+  local button = buttonmodul.createButton(xi, y, label, kontext)
   menuButtons[button.id] = button
-  menuY = y + img:getHeight()
+  menuY = y + buttonIMG:getHeight()
 end
 
-function buttonmodul.createButton(xi, yi, img, label, kontext)
+function buttonmodul.createButton(xi, yi, label, kontext)
   local button = {}
   button.x = xi
   button.y = yi
-  button.img = img
-  button.height = img:getHeight()
-  button.width = img:getWidth()
+  button.img = buttonIMG
+  button.height = buttonIMG:getHeight()
+  button.width = buttonIMG:getWidth()
   button.label = label
   button.id = love.math.random(2, 5356882) * love.math.random(12, 8899771)..label
   button.kontext = kontext

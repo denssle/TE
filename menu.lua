@@ -1,4 +1,4 @@
-local buttonmodul = require "button"
+buttonmodul = require "button"
 local playermodul = require "player"
 local c = require "statics"
 
@@ -8,13 +8,13 @@ local inGame = false
 local colorButtons = nil
 local checkedColorButton = nil
 
-function menumodul.initMenu(buttonIMG, colors)
+function menumodul.initMenu(colors)
   -- normal menu buttons
-  buttonmodul.createMenuButton(buttonIMG, c.pve, false)
-  buttonmodul.createMenuButton(buttonIMG, c.pvp, false)
+  buttonmodul.createMenuButton(c.pve, false)
+  buttonmodul.createMenuButton(c.pvp, false)
   -- kontext menu buttons
-  buttonmodul.createMenuButton(buttonIMG, c.createPlayer, true)
-  buttonmodul.createMenuButton(buttonIMG, c.continue, true)
+  buttonmodul.createMenuButton(c.createPlayer, true)
+  buttonmodul.createMenuButton(c.continue, true)
   -- color buttons
   for name, color in pairs(colors) do
     buttonmodul.createColorButton(color, name)

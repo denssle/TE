@@ -1,4 +1,3 @@
-
 local c = require "statics"
 local buttonmodul = require "button"
 
@@ -6,12 +5,10 @@ popupmodul = {}
 local buttonIMG = nil
 
 function popupmodul.draw(checkedKnot, player)
-  if buttonIMG ~= nil then
-    if checkedKnot == nil then
-      popupmodul.administrationPopup(player)
-    else
-      popupmodul.knotPopup(checkedKnot)
-    end
+  if checkedKnot == nil then
+    popupmodul.administrationPopup(player)
+  else
+    popupmodul.knotPopup(checkedKnot)
   end
 end
 
@@ -47,12 +44,12 @@ end
 
 function popupmodul.init(img)
   buttonIMG = img
-  buttonmodul.createAdministrationButton(buttonIMG, c.administration)
-  buttonmodul.createAdministrationButton(buttonIMG, c.info)
+  buttonmodul.createAdministrationButton(c.administration)
+  buttonmodul.createAdministrationButton(c.info)
 
-  buttonmodul.createKnotInfoButton(buttonIMG, c.updateArmy)
-  buttonmodul.createKnotInfoButton(buttonIMG, c.buildFort)
-  buttonmodul.createKnotInfoButton(buttonIMG, c.buildFarm)
+  buttonmodul.createKnotInfoButton(c.updateArmy)
+  buttonmodul.createKnotInfoButton(c.buildFort)
+  buttonmodul.createKnotInfoButton(c.buildFarm)
 end
 
 return popupmodul

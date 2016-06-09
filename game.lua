@@ -2,7 +2,7 @@ local knotenmodul = require "knot"
 local triplemodul = require "triple"
 local armymodul= require "army"
 local roundmodul = require "round"
-local buttonmodul = require "button"
+buttonmodul = require "button"
 local popupmodul = require "popup"
 local c = require "statics"
 
@@ -13,18 +13,18 @@ local checkedKnotID = nil
 local ready = false
 local popupActiv = false
 
-function gamemodul.initGame(pm, buttonIMG, kIMG)
+function gamemodul.initGame(pm, kIMG)
   print("Init Game!")
   playermodul = pm
   knotIMG = kIMG
   -- 'normal' in game buttons
-  buttonmodul.createInGameButton(buttonIMG, c.nextRound, false) -- img, label, knot kontext
-  buttonmodul.createInGameButton(buttonIMG, c.createKnot, false)
-  buttonmodul.createInGameButton(buttonIMG, c.administration, false)
+  buttonmodul.createInGameButton(c.nextRound, false) -- img, label, knot kontext
+  buttonmodul.createInGameButton(c.createKnot, false)
+  buttonmodul.createInGameButton(c.administration, false)
   -- kontext buttons
-  buttonmodul.createInGameButton(buttonIMG, c.info, true)
+  buttonmodul.createInGameButton(c.info, true)
   gamemodul.createKnotsAndTripels()
-  popupmodul.init(buttonIMG)
+  popupmodul.init()
   ready = true
 end
 
@@ -75,6 +75,7 @@ function gamemodul.draw()
     buttonmodul.drawButtons(buttons, checkedKnotID)
   else
     print("GAME IS OVER!")
+    drawMessage("GAME OVER\nTHE WINNER IS: "..tostring(playermodul.getActivPlayer().name))
   end
 end
 
@@ -110,7 +111,7 @@ function gamemodul.leftClick(x, y)
       else -- No checked Knot
         gamemodul.leftClickNoCheckedKnot(clickedKnot, x,y)
       end
-    else -- open PopUp
+    else -- PopUp is open
       popupActiv = false
       checkedKnotID = nil
     end
@@ -253,7 +254,7 @@ function gamemodul.drawRoundsAndPlayerAndFPS  ()
 end
 
 function gamemodul.rightClick(x, y)
-
+  print("Game rightClick")
 end
 
 return gamemodul

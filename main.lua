@@ -2,6 +2,7 @@ debug = true
 local utf8 = require("utf8")
 local menumodul = require "menu"
 local gamemodul = require "game"
+buttonmodul = require "button"
 local c = require "statics"
 
 --local knotCursor = nil
@@ -17,12 +18,18 @@ function love.load(arg)
   knotIMG = love.graphics.newImage( '/assets/ball.png' )
   buttonIMG = love.graphics.newImage( '/assets/buttonEmpty.png' )
 
+  minusIMG = love.graphics.newImage( '/assets/minus.png' )
+  plusIMG = love.graphics.newImage( '/assets/plus.png' )
+  sliderPoint = love.graphics.newImage( '/assets/null.png' )
+
+
   --normalCursor = love.mouse.getSystemCursor("arrow")
   --knotCursor = love.mouse.getSystemCursor("crosshair")
   --love.mouse.setCursor(normalCursor)
-  colors = createColors()
+  buttonmodul.init(buttonIMG)
   inMenu = true
-  menumodul.initMenu(buttonIMG, colors)
+  colors = createColors()
+  menumodul.initMenu(colors)
 end
 
 function love.update(dt)
@@ -32,7 +39,7 @@ function love.update(dt)
     if menumodul.update() then
       inGame = true
       inMenu = false
-      gamemodul.initGame(menumodul.getPlayerModul(), buttonIMG, knotIMG)
+      gamemodul.initGame(menumodul.getPlayerModul(), knotIMG)
     end
   end
 end
@@ -50,9 +57,10 @@ function love.draw(dt)
   if inGame then
     gamemodul.draw()
   elseif inMenu then
+    slidermodul.draw()
     menumodul.draw()
   else --GAME OVER
-    drawMessage("GAME OVER\nTHE WINNER IS: "..tostring(playermodul.getActivPlayer().name))
+    print("stuff")
   end
 end
 
