@@ -10,6 +10,7 @@ statics.pvp = "PVP"
 statics.continue = "Continue"
 statics.createPlayer = "Create Player"
 statics.info = "Info"
+statics.administration = "Verwaltung"
 --keys
 statics.quit = 'quit'
 statics.backspace = 'backspace'

@@ -1,55 +1,55 @@
 local buttonmodul = {}
 local inGameButtons = {}
 local menuButtons = {}
-local popupButtons = {}
+local knotInfoButtons = {}
+local administrationButtons = {}
+local allButtons = {}
 local inGameBX = 20
 local menuY = 100
 local colorY = 100
-local popX = 10
+local kInfoX = 10
+local adminX = 10
 
 function buttonmodul.createInGameButton(img, label, kontext)
   local X = inGameBX + 20 -- abstand zwischen den buttons
-  local button = {}
-  button.x = inGameBX
-  button.y = 700
-  button.img = img
-  button.height = img:getHeight()
-  button.width = img:getWidth()
-  button.label = label
-  button.id = love.math.random(2, 53562) * love.math.random(12, 8899771)..label
-  button.kontext = kontext
+  local button = buttonmodul.createButton(inGameBX, 700, img, label, kontext)
   inGameButtons[button.id] = button
   inGameBX = X + img:getWidth()
 end
 
-function buttonmodul.createPopUpButtons(img, label)
-  local x = popX
-  local button = {}
-  button.x = x
-  button.y = 10
-  button.img = img
-  button.height = img:getHeight()
-  button.width = img:getWidth()
-  button.label = label
-  button.id = love.math.random(12, 738422) * love.math.random(9, 1111773)..label
-  button.kontext = false
-  popupButtons[button.id] = button
-  popX = math.ceil( x + img:getWidth() * 3)
+function buttonmodul.createKnotInfoButton(img, label)
+  local x = kInfoX
+  local button = buttonmodul.createButton(x, 10, img, label, false)
+  knotInfoButtons[button.id] = button
+  kInfoX = math.ceil( x + img:getWidth() * 3)
+end
+
+function buttonmodul.createAdministrationButton(img, label)
+  local x = adminX
+  local button = buttonmodul.createButton(x, 10, img, label, false)
+  administrationButtons[button.id] = button
+  adminX = math.ceil( x + img:getWidth() * 3)
 end
 
 function buttonmodul.createMenuButton(img, label, kontext)
   local y = menuY + 30
+  local xi = math.ceil (love.graphics.getHeight() / 2.5)
+  local button = buttonmodul.createButton(xi, y, img, label, kontext)
+  menuButtons[button.id] = button
+  menuY = y + img:getHeight()
+end
+
+function buttonmodul.createButton(xi, yi, img, label, kontext)
   local button = {}
-  button.x = math.ceil (love.graphics.getHeight() / 2.5)
-  button.y = y
+  button.x = xi
+  button.y = yi
   button.img = img
   button.height = img:getHeight()
   button.width = img:getWidth()
   button.label = label
+  button.id = love.math.random(2, 5356882) * love.math.random(12, 8899771)..label
   button.kontext = kontext
-  button.id = love.math.random(2, 120000) * love.math.random(12, 8899771)..label
-  menuButtons[button.id] = button
-  menuY = y + img:getHeight()
+  return button
 end
 
 function buttonmodul.createColorButton(color, name)
@@ -80,8 +80,12 @@ function buttonmodul.getMenuButtons()
   return menuButtons
 end
 
-function buttonmodul.getPopUpButtons()
-  return popupButtons
+function buttonmodul.getKnotInfoButtons()
+  return knotInfoButtons
+end
+
+function buttonmodul.getAdministrationButtons()
+  return administrationButtons
 end
 
 function buttonmodul.getMenuButtonForClick(x, y)

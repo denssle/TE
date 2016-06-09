@@ -20,13 +20,11 @@ function gamemodul.initGame(pm, buttonIMG, kIMG)
   -- 'normal' in game buttons
   buttonmodul.createInGameButton(buttonIMG, c.nextRound, false) -- img, label, knot kontext
   buttonmodul.createInGameButton(buttonIMG, c.createKnot, false)
+  buttonmodul.createInGameButton(buttonIMG, c.administration, false)
   -- kontext buttons
   buttonmodul.createInGameButton(buttonIMG, c.info, true)
-  buttonmodul.createInGameButton(buttonIMG, c.updateArmy, true)
-  buttonmodul.createInGameButton(buttonIMG, c.buildFort, true)
-  buttonmodul.createInGameButton(buttonIMG, c.buildFarm, true)
   gamemodul.createKnotsAndTripels()
-  popupmodul.setIMG(buttonIMG)
+  popupmodul.init(buttonIMG)
   ready = true
 end
 
@@ -46,6 +44,9 @@ function gamemodul.update()
       if not playermodul.enoughtActionsLeft(0) then
         gamemodul.nextRound()
       end
+    else -- not enought Players left
+      ready = false
+      print("END THIS SHIT!")
     end
   end
 end
@@ -53,10 +54,18 @@ end
 function gamemodul.draw()
   if ready then
     local checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
+    if checkedKnot ~= nil then
+      checkedKnot.check = true
+    end
     local buttons = buttonmodul.getInGameButtons()
     if popupActiv then
-      popupmodul.draw(checkedKnot)
-      local popupButtons = buttonmodul.getPopUpButtons()
+      popupmodul.draw(checkedKnot, playermodul.getActivPlayer())
+      local popupButtons = nil
+      if checkedKnotID == nil then
+        popupButtons = buttonmodul.getAdministrationButtons()
+      else
+        popupButtons = buttonmodul.getKnotInfoButtons()
+      end
       buttonmodul.drawButtons(popupButtons, checkedKnotID)
     else
       gamemodul.drawRoundsAndPlayerAndFPS()
@@ -88,7 +97,7 @@ end
 
 function gamemodul.leftClick(x, y)
   knotenmodul.uncheckAll()
-  local btn = buttonmodul.getInGameButtonForClick(x, y)
+  btn = gamemodul.getButton(x, y)
   if btn ~= nil then --button clicked
     gamemodul.handleInGameButton(btn)
   else
@@ -104,6 +113,18 @@ function gamemodul.leftClick(x, y)
       checkedKnotID = nil
     end
   end
+end
+
+function gamemodul.getButton(x, y)
+  local btn = nil
+  if popupActiv and checkedKnotID == nil then
+     btn = buttonmodul.getButtonForClick(buttonmodul.getAdministrationButtons(), x, y)
+  elseif popupActiv and checkedKnotID ~= nil and btn == nil then
+    btn = buttonmodul.getButtonForClick(buttonmodul.getKnotInfoButtons(), x, y)
+  else
+    btn = buttonmodul.getInGameButtonForClick(x, y)
+  end
+  return btn
 end
 
 function gamemodul.leftClickCheckedKnot (clickedKnot)
@@ -153,52 +174,53 @@ function gamemodul.updateArmy (knot)
 end
 
 function gamemodul.handleInGameButton  (btn)
+  print("handleInGameButton", checkedKnotID, btn)
   if btn ~= nil then
     if btn.label == c.nextRound then
       gamemodul.nextRound()
-    end
-    if btn.label == c.createKnot then
+    elseif btn.label == c.createKnot then
       gamemodul.createKnotInGame(playermodul.getActivPlayer())
       playermodul.useAction(1)
-    end
-    if checkedKnotID ~= nil then
+    elseif btn.label == c.administration then
+      checkedKnotID = nil
+      popupActiv = true
+    elseif checkedKnotID ~= nil then
       gamemodul.handleInGameKontextButtons(btn)
     end
   end
-  checkedKnotID = nil
 end
 
 function gamemodul.handleInGameKontextButtons (btn)
+  print("handleInGameKontextButtons")
   local checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
   if checkedKnot.player.id == playermodul.getActivPlayer().id then
-    print(checkedKnot.player.id, " VS ", playermodul.getActivPlayer().id)
-    if btn.label == c.buildFort then
-      gamemodul.fortificateKnot(checkedKnot)
-    end
-    if btn.label == c.updateArmy then
-      if checkedKnot.army ~= nil then
-        gamemodul.updateArmy(checkedKnot)
-      else
-        gamemodul.createArmy(checkedKnot)
-      end
-    end
-    if btn.label == c.buildFarm then
-      gamemodul.farmificateKnot(checkedKnot)
-    end
     if btn.label == c.info then
       popupActiv = true
+    elseif popupActiv then
+      if btn.label == c.buildFort then
+        gamemodul.fortificateKnot(checkedKnot)
+      elseif btn.label == c.updateArmy then
+        if checkedKnot.army ~= nil then
+          gamemodul.updateArmy(checkedKnot)
+        else
+          gamemodul.createArmy(checkedKnot)
+        end
+      elseif btn.label == c.buildFarm then
+        gamemodul.farmificateKnot(checkedKnot)
+      end
     end
   end
 end
 
 function gamemodul.nextRound ()
+  print("Next round")
   if playermodul.anyPlayersLeft() then
+    local checkedKnotID = nil
+    local popupActiv = false
     local nextPlayer = playermodul.nextPlayer()
     local nbr = knotenmodul.getActionsOfPlayerID(nextPlayer.id)
     playermodul.setActions(nbr)
     roundmodul.incrementRound()
-    local checkedKnotID = nil
-    local popupActiv = false
   end
 end
 
