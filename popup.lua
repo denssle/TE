@@ -20,20 +20,20 @@ function popupmodul.knotPopup(checkedKnot)
   local scale_factor_Y = 2
   love.graphics.setColor(player.color.red, player.color.green, player.color.blue)
 
-  local yi = y + 20
+  local yi = Y + 20
   love.graphics.print("Knot: "..tostring(checkedKnot.name), X, yi, 0, scale_factor_X, scale_factor_Y) -- text, x, y
 
-  local yi = y + 40
+  local yi = Y + 40
   if checkedKnot.army ~= nil then
     love.graphics.print("Army: "..tostring(checkedKnot.army.strength), X, yi, 0, scale_factor_X, scale_factor_Y)
   else
     love.graphics.print("Army: "..0, X, yi, 0, scale_factor_X, scale_factor_Y)
   end
 
-  local yi = y + 60
+  local yi = Y + 60
   love.graphics.print("Fort: "..tostring(checkedKnot.fortification), X, yi, 0, scale_factor_X, scale_factor_Y)
 
-  local yi = y + 80
+  local yi = Y + 80
   love.graphics.print("Farm: "..tostring(checkedKnot.farm), X, yi, 0, scale_factor_X, scale_factor_Y)
 end
 
