@@ -11,6 +11,9 @@ statics.continue = "Continue"
 statics.createPlayer = "Create Player"
 statics.info = "Info"
 statics.administration = "Verwaltung"
+statics.plus = "Plus"
+statics.minus = "Minus"
+statics.point = "Point"
 --keys
 statics.quit = 'quit'
 statics.backspace = 'backspace'

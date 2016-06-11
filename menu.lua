@@ -20,6 +20,7 @@ function menumodul.initMenu(colors)
     buttonmodul.createColorButton(color, name)
   end
   colorButtons = colors
+  buttonmodul.createSlider(buttonmodul.getmenuSliders(), 720, 5)
 end
 
 function menumodul.update()
@@ -29,6 +30,7 @@ end
 function menumodul.draw()
   local buttons = buttonmodul.getMenuButtons()
   buttonmodul.drawButtons(buttons, isKontext)
+  buttonmodul.drawSliders(buttonmodul.getmenuSliders())
   menumodul.drawPlayers()
 end
 
@@ -48,6 +50,8 @@ function menumodul.leftClick(x, y)
   local btn = buttonmodul.getMenuButtonForClick(x, y)
   if btn ~= nil then --button clicked
     menumodul.handeMenuButton(btn)
+  else
+    buttonmodul.getSliderButtonForClick(buttonmodul.getmenuSliders(), x, y)
   end
 end
 

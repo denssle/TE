@@ -145,12 +145,20 @@ function buttonmodul.drawButtons(buttons, isKontext)
   end
 end
 
-function buttonmodul.drawSliders()
-  slidermodul.draw()
+function buttonmodul.drawSliders(list)
+  slidermodul.draw(list)
 end
 
-function buttonmodul.createSlider(y)
-  slidermodul.createSlider(y)
+function buttonmodul.createSlider(list, y, max)
+  slidermodul.createSlider(list, y, max)
+end
+
+function buttonmodul.getmenuSliders()
+  return slidermodul.getmenuSliders()
+end
+
+function buttonmodul.getSliderButtonForClick(list, x, y)
+  return slidermodul.click(list, x, y)
 end
 
 return buttonmodul

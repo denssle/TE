@@ -57,7 +57,6 @@ function love.draw(dt)
   if inGame then
     gamemodul.draw()
   elseif inMenu then
-    slidermodul.draw()
     menumodul.draw()
   else --GAME OVER
     print("stuff")
