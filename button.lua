@@ -145,4 +145,12 @@ function buttonmodul.drawButtons(buttons, isKontext)
   end
 end
 
+function buttonmodul.drawSliders()
+  slidermodul.draw()
+end
+
+function buttonmodul.createSlider(y)
+  slidermodul.createSlider(y)
+end
+
 return buttonmodul
