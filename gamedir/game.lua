@@ -1,9 +1,9 @@
-local knotenmodul = require "knot"
-local triplemodul = require "triple"
-local armymodul= require "army"
-local roundmodul = require "round"
+local knotenmodul = require "/gamedir/knot"
+local triplemodul = require "/gamedir/triple"
+local armymodul= require "/gamedir/army"
+local roundmodul = require "/gamedir/round"
 buttonmodul = require "button"
-local popupmodul = require "popup"
+local popupmodul = require "/gamedir/popup"
 local c = require "statics"
 
 local gamemodul = {}

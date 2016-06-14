@@ -1,7 +1,7 @@
 debug = true
 local utf8 = require("utf8")
-local menumodul = require "menu"
-local gamemodul = require "game"
+local menumodul = require "/menudir/menu"
+local gamemodul = require "/gamedir/game"
 buttonmodul = require "button"
 local c = require "statics"
 
@@ -21,7 +21,6 @@ function love.load(arg)
   local minusIMG = love.graphics.newImage( '/assets/minus.png' )
   local plusIMG = love.graphics.newImage( '/assets/plus.png' )
   local sliderPoint = love.graphics.newImage( '/assets/null.png' )
-
 
   --normalCursor = love.mouse.getSystemCursor("arrow")
   --knotCursor = love.mouse.getSystemCursor("crosshair")
