@@ -1,50 +1,12 @@
 local slidermodul = require "slider"
 
-local buttonIMG = nil
 local buttonmodul = {}
-local inGameButtons = {}
-local menuButtons = {}
-local knotInfoButtons = {}
-local administrationButtons = {}
-local allButtons = {}
-local inGameBX = 20
-local menuY = 100
+local buttonIMG = nil
 local colorY = 100
-local kInfoX = 10
-local adminX = 10
 
 function buttonmodul.init(bIMG, p, m, s)
   buttonIMG = bIMG
   slidermodul.init(p, m, s)
-end
-
-function buttonmodul.createInGameButton(label, kontext)
-  local X = inGameBX + 20 -- abstand zwischen den buttons
-  local button = buttonmodul.createButton(inGameBX, 700, label, kontext)
-  inGameButtons[button.id] = button
-  inGameBX = X + buttonIMG:getWidth()
-end
-
-function buttonmodul.createKnotInfoButton(label)
-  local x = kInfoX
-  local button = buttonmodul.createButton(x, 10, label, false)
-  knotInfoButtons[button.id] = button
-  kInfoX = math.ceil( x + buttonIMG:getWidth() * 3)
-end
-
-function buttonmodul.createAdministrationButton(label)
-  local x = adminX
-  local button = buttonmodul.createButton(x, 10, label, false)
-  administrationButtons[button.id] = button
-  adminX = math.ceil( x + buttonIMG:getWidth() * 3)
-end
-
-function buttonmodul.createMenuButton(label, kontext)
-  local y = menuY + 30
-  local xi = math.ceil (love.graphics.getHeight() / 2.5)
-  local button = buttonmodul.createButton(xi, y, label, kontext)
-  menuButtons[button.id] = button
-  menuY = y + buttonIMG:getHeight()
 end
 
 function buttonmodul.createButton(xi, yi, label, kontext)
@@ -70,38 +32,14 @@ function buttonmodul.createColorButton(color, name)
   button.width = color.img:getWidth()
   button.kontext = true
   button.label = ""
-  button.id = love.math.random(11, 1293029) * love.math.random(122, 777777)..name
+  button.id = love.math.random(11, 1293029) * love.math.random(122, 7777778)..name
   button.checked = false
   button.name = name
   button.red = color.red
   button.blue = color.blue
   button.green  = color.green
-  menuButtons[button.id] = button
   colorY = cy + color.img:getHeight()
-end
-
-function buttonmodul.getInGameButtons()
-  return inGameButtons
-end
-
-function buttonmodul.getMenuButtons()
-  return menuButtons
-end
-
-function buttonmodul.getKnotInfoButtons()
-  return knotInfoButtons
-end
-
-function buttonmodul.getAdministrationButtons()
-  return administrationButtons
-end
-
-function buttonmodul.getMenuButtonForClick(x, y)
-    return buttonmodul.getButtonForClick(menuButtons, x, y)
-end
-
-function buttonmodul.getInGameButtonForClick(x, y)
-  return buttonmodul.getButtonForClick(inGameButtons, x, y)
+  return button
 end
 
 function buttonmodul.getButtonForClick(list, x, y)
@@ -115,7 +53,7 @@ function buttonmodul.getButtonForClick(list, x, y)
       for xi = xlow, xhigh, 1 do
         for yi = ylow, yhigh, 1 do
           if buttn.x == xi and buttn.y == yi then
-            print("getButtonForClick", buttn.label)
+            print("getButtonForClick", buttn.label, buttn.id)
             return buttn
           end
         end
@@ -151,10 +89,6 @@ end
 
 function buttonmodul.createSlider(list, y, max)
   slidermodul.createSlider(list, y, max)
-end
-
-function buttonmodul.getmenuSliders()
-  return slidermodul.getmenuSliders()
 end
 
 function buttonmodul.getSliderButtonForClick(list, x, y)

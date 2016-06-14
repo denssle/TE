@@ -1,115 +1,45 @@
-buttonmodul = require "button"
-local playermodul = require "player"
 local c = require "statics"
+local startmodul = require "/menudir/startMenu"
+local setupmodul = require "/menudir/setupMenu"
 
 local menumodul = {}
-local isKontext = nil
-local inGame = false
-local colorButtons = nil
-local checkedColorButton = nil
+local playermodul = nil
 
 function menumodul.initMenu(colors)
-  -- normal menu buttons
-  buttonmodul.createMenuButton(c.pve, false)
-  buttonmodul.createMenuButton(c.pvp, false)
-  -- kontext menu buttons
-  buttonmodul.createMenuButton(c.createPlayer, true)
-  buttonmodul.createMenuButton(c.continue, true)
-  -- color buttons
-  for name, color in pairs(colors) do
-    buttonmodul.createColorButton(color, name)
-  end
-  colorButtons = colors
-  buttonmodul.createSlider(buttonmodul.getmenuSliders(), 720, 5)
+  startmodul.init(colors)
+  setupmodul.init()
 end
 
 function menumodul.update()
-  return inGame
-end
-
-function menumodul.draw()
-  local buttons = buttonmodul.getMenuButtons()
-  buttonmodul.drawButtons(buttons, isKontext)
-  buttonmodul.drawSliders(buttonmodul.getmenuSliders())
-  menumodul.drawPlayers()
-end
-
-function menumodul.drawPlayers()
-  local players = playermodul.getPlayers()
-  local y = 100
-  local x = math.ceil (love.graphics.getHeight() / 1.5)
-  for i, player in pairs(players) do
-    local yi = y + 30
-    love.graphics.setColor(player.color.red, player.color.green, player.color.blue)
-    love.graphics.print(i.." "..player.name, x, yi)
-    y = yi + 30
-  end
-end
-
-function menumodul.leftClick(x, y)
-  local btn = buttonmodul.getMenuButtonForClick(x, y)
-  if btn ~= nil then --button clicked
-    menumodul.handeMenuButton(btn)
-  else
-    buttonmodul.getSliderButtonForClick(buttonmodul.getmenuSliders(), x, y)
-  end
-end
-
-function menumodul.rightClick(x, y)
-end
-
-function menumodul.handeMenuButton(btn)
-  if btn ~= nil then
-    if btn.label == c.pve then
-      print("handle", c.pve)
-    elseif btn.label == c.pvp then
-      isKontext = btn.label
-    elseif btn.label == c.continue and isKontext == c.pvp then
-      print("handle", c.continue)
-      menumodul.startGame()
-    elseif menumodul.isColorButton(btn) and isKontext == c.pvp then
-      print("handle", btn.label)
-      menumodul.checkColorButton(btn)
-    elseif btn.label == c.createPlayer and isKontext == c.pvp then
-      print("handle", btn.label)
-      menumodul.createPlayer()
-    end
-  end
-end
-
-function menumodul.isColorButton(btn)
-  for name, color in pairs(colorButtons) do
-    if name == btn.name then
-      return true
-    end
-  end
-  return false
-end
-
-function menumodul.checkColorButton(btn)
-  if checkedColorButton ~= nil then
-    checkedColorButton.checked = false
-  end
-  btn.checked = true
-  checkedColorButton = btn
-end
-
-function menumodul.startGame()
-  if playermodul.anyPlayersLeft() then
-    inGame = true
-  end
-end
-
-function menumodul.createPlayer()
-  if checkedColorButton ~= nil then
-    local btn = checkedColorButton
-    local newPlayer = playermodul.createPlayer(btn.name, btn.red, btn.green, btn.blue)
-    checkedColorButton.checked = false
+  if startmodul.done() and setupmodul.done() == nil then
+    setupmodul.start(startmodul.getPlayerModul())
+  elseif startmodul.done() and setupmodul.done() then
+    playermodul = setupmodul.getPlayerModul()
+    return true -- returns true if Menu is done
   end
 end
 
 function menumodul.getPlayerModul()
   return playermodul
+end
+
+function menumodul.draw()
+  if not startmodul.done() then
+    startmodul.draw()
+  elseif startmodul.done() and not setupmodul.done() then
+    setupmodul.draw()
+  end
+end
+
+function menumodul.leftClick(x, y)
+  if not startmodul.done() then
+    startmodul.leftClick(x, y)
+  elseif startmodul.done() and not setupmodul.done() then
+    setupmodul.leftClick(x, y)
+  end
+end
+
+function menumodul.rightClick(x, y)
 end
 
 return menumodul

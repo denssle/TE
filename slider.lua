@@ -1,7 +1,6 @@
 local c = require "statics"
 
 slidermodul = {}
-local menuSliders = {}
 local plusIMG = nil
 local minusIMG = nil
 local sliderIMG = nil
@@ -73,10 +72,6 @@ function slidermodul.createPlus(px, y)
   plus.height = plusIMG:getHeight()
   plus.width = plusIMG:getWidth()
   return plus
-end
-
-function slidermodul.getmenuSliders()
-  return menuSliders
 end
 
 function slidermodul.draw(list)

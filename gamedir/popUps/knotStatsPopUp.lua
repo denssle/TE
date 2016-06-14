@@ -1,19 +1,28 @@
 local c = require "statics"
 local buttonmodul = require "button"
 
-popupmodul = {}
-local buttonIMG = nil
+knotStats = {}
+local buttons = {}
+local checkedKnot = nil
 
-function popupmodul.draw(checkedKnot, player)
-  if checkedKnot == nil then
-    popupmodul.administrationPopup(player)
-  else
-    popupmodul.knotPopup(checkedKnot)
-  end
+function knotStats.init()
+  local ua = buttonmodul.createButton(10, 20, c.updateArmy, false) -- createButton(xi, yi, label, kontext)
+  buttons[ua.id] = ua
+  local bfort = buttonmodul.createButton(110, 20, c.buildFort, false)
+  buttons[bfort.id] = bfort
+  local bfarm = buttonmodul.createButton(210, 20, c.buildFarm, false)
+  buttons[bfarm.id] = bfarm
 end
 
-function popupmodul.knotPopup(checkedKnot)
-  local player = checkedKnot.player
+function administrationPopup.start(kn)
+  checkedKnot = kn
+end
+
+function administrationPopup.stop()
+  checkedKnot = nil
+end
+
+function knotStats.draw(checkedKnot, player)
   local Y = 300
   local X = math.ceil ( love.graphics.getWidth() / 3 )
   local scale_factor_X = 2
@@ -37,19 +46,8 @@ function popupmodul.knotPopup(checkedKnot)
   love.graphics.print("Farm: "..tostring(checkedKnot.farm), X, yi, 0, scale_factor_X, scale_factor_Y)
 end
 
-function popupmodul.administrationPopup(player)
-  love.graphics.setColor(255, 255, 255)
-  love.graphics.print("Admin: "..tostring(player.name), 200, 400)
+function knotStats.clickedButton(x, y)
+  local btn = buttonmodul.getButtonForClick(buttons, x, y)
 end
 
-function popupmodul.init(img)
-  buttonIMG = img
-  buttonmodul.createAdministrationButton(c.administration)
-  buttonmodul.createAdministrationButton(c.info)
-
-  buttonmodul.createKnotInfoButton(c.updateArmy)
-  buttonmodul.createKnotInfoButton(c.buildFort)
-  buttonmodul.createKnotInfoButton(c.buildFarm)
-end
-
-return popupmodul
+return knotStats

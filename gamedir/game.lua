@@ -2,38 +2,49 @@ local knotenmodul = require "/gamedir/knot"
 local triplemodul = require "/gamedir/triple"
 local armymodul= require "/gamedir/army"
 local roundmodul = require "/gamedir/round"
-buttonmodul = require "button"
-local popupmodul = require "/gamedir/popup"
+local buttonmodul = require "button"
+local administrationmodul = require "/gamedir/popUps/administrationPopUp"
+local knotStatsmodul = require "/gamedir/popUps/knotStatsPopUp"
 local c = require "statics"
 
 local gamemodul = {}
+local buttons = {}
 local playermodul = nil
 local knotIMG = nil
 local checkedKnotID = nil
 local ready = false
-local popupActiv = false
+local activPopUp = nil
 
 function gamemodul.initGame(pm, kIMG)
   print("Init Game!")
   playermodul = pm
   knotIMG = kIMG
-  -- 'normal' in game buttons
-  buttonmodul.createInGameButton(c.nextRound, false) -- img, label, knot kontext
-  buttonmodul.createInGameButton(c.createKnot, false)
-  buttonmodul.createInGameButton(c.administration, false)
-  -- kontext buttons
-  buttonmodul.createInGameButton(c.info, true)
+  gamemodul.createButtons()
   gamemodul.createKnotsAndTripels()
-  popupmodul.init()
+  administrationmodul.init()
+  knotStatsmodul.init()
   ready = true
+end
+
+function gamemodul.createButtons()
+  -- 'normal' in game buttons
+  local nr = buttonmodul.createButton(300, 200, c.nextRound, false) -- createButton(xi, yi, label, kontext)
+  buttons[nr.id] = nr
+  local ck = buttonmodul.createButton(300, 300, c.createKnot, false)
+  buttons[ck.id] = ck
+  local ad = buttonmodul.createButton(300, 400, c.administration, false)
+  buttons[ad.id] = ad
+  -- kontext buttons
+  local info = buttonmodul.createButton(300, 500, c.info, true)
+  buttons[info.id] = info
 end
 
 function gamemodul.update()
   if ready then
     if playermodul.anyPlayersLeft() then
+      knotenmodul.deleteDeadKnots()
       triplemodul.deleteDeadTriples()
       triplemodul.updateTriplesOptions()
-      knotenmodul.deleteDeadKnots()
 
       local knotsOfActivPlayer = knotenmodul.getActionsOfPlayerID(playermodul.getActivPlayer().id)
       if knotsOfActivPlayer <= 0 then
@@ -57,22 +68,14 @@ function gamemodul.draw()
     if checkedKnot ~= nil then
       checkedKnot.check = true
     end
-    local buttons = buttonmodul.getInGameButtons()
-    if popupActiv then
-      popupmodul.draw(checkedKnot, playermodul.getActivPlayer())
-      local popupButtons = nil
-      if checkedKnotID == nil then
-        popupButtons = buttonmodul.getAdministrationButtons()
-      else
-        popupButtons = buttonmodul.getKnotInfoButtons()
-      end
-      buttonmodul.drawButtons(popupButtons, checkedKnotID)
+    if activPopUp ~= nil then --PopUp open
+      activPopUp.draw(checkedKnot, playermodul.getActivPlayer())
     else
       gamemodul.drawRoundsAndPlayerAndFPS()
       triplemodul.drawTriples()
       knotenmodul.drawKnotens(knotIMG)
+      buttonmodul.drawButtons(buttons, checkedKnotID)
     end
-    buttonmodul.drawButtons(buttons, checkedKnotID)
   else
     print("GAME IS OVER!")
     drawMessage("GAME OVER\nTHE WINNER IS: "..tostring(playermodul.getActivPlayer().name))
@@ -100,34 +103,22 @@ end
 
 function gamemodul.leftClick(x, y)
   knotenmodul.uncheckAll()
-  local btn = gamemodul.getButton(x, y)
-  if btn ~= nil then --button clicked
-    gamemodul.handleInGameButton(btn)
-  else
-    if not popupActiv then
+
+  if activPopUp == nil then -- PopUp not open
+    local btn = buttonmodul.getButtonForClick(buttons, x, y)
+    if btn ~= nil then --button clicked
+      gamemodul.handleInGameButton(btn)
+    else
       local clickedKnot = knotenmodul.getKnotForClick(x, y)
       if checkedKnotID ~= nil then --We have a checked Knot
         gamemodul.leftClickCheckedKnot(clickedKnot)
       else -- No checked Knot
         gamemodul.leftClickNoCheckedKnot(clickedKnot, x,y)
       end
-    else -- PopUp is open
-      popupActiv = false
-      checkedKnotID = nil
     end
+  else -- PopUp open
+    activPopUp.clickedButton(x, y)
   end
-end
-
-function gamemodul.getButton(x, y)
-  local btn = nil
-  if popupActiv and checkedKnotID == nil then
-     btn = buttonmodul.getButtonForClick(buttonmodul.getAdministrationButtons(), x, y)
-  elseif popupActiv and checkedKnotID ~= nil and btn == nil then
-    btn = buttonmodul.getButtonForClick(buttonmodul.getKnotInfoButtons(), x, y)
-  else
-    btn = buttonmodul.getInGameButtonForClick(x, y)
-  end
-  return btn
 end
 
 function gamemodul.leftClickCheckedKnot (clickedKnot)
@@ -176,7 +167,7 @@ function gamemodul.updateArmy (knot)
   end
 end
 
-function gamemodul.handleInGameButton  (btn)
+function gamemodul.handleInGameButton (btn)
   print("handleInGameButton", checkedKnotID, btn)
   if btn ~= nil then
     if btn.label == c.nextRound then
@@ -186,7 +177,7 @@ function gamemodul.handleInGameButton  (btn)
       playermodul.useAction(1)
     elseif btn.label == c.administration then
       checkedKnotID = nil
-      popupActiv = true
+      activPopUp = administrationmodul
     elseif checkedKnotID ~= nil then
       gamemodul.handleInGameKontextButtons(btn)
     end
@@ -198,8 +189,8 @@ function gamemodul.handleInGameKontextButtons (btn)
   local checkedKnot = knotenmodul.getKnotByID(checkedKnotID)
   if checkedKnot.player.id == playermodul.getActivPlayer().id then
     if btn.label == c.info then
-      popupActiv = true
-    elseif popupActiv then
+      activPopUp = knotStatsmodul
+    elseif activPopUp then
       if btn.label == c.buildFort then
         gamemodul.fortificateKnot(checkedKnot)
       elseif btn.label == c.updateArmy then
@@ -219,7 +210,7 @@ function gamemodul.nextRound ()
   print("Next round")
   if playermodul.anyPlayersLeft() then
     local checkedKnotID = nil
-    local popupActiv = false
+    local activPopUp = false
     local nextPlayer = playermodul.nextPlayer()
     local nbr = knotenmodul.getActionsOfPlayerID(nextPlayer.id)
     playermodul.setActions(nbr)
